@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HouseholdManager.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TextFont" Type="System.Drawing.Font" Scope="User">
+      <Value Profile="(Default)">Book Antiqua, 12pt, style=Bold</Value>
+    </Setting>
+    <Setting Name="TextColor" Type="System.Drawing.Color" Scope="User">
+      <Value Profile="(Default)">Teal</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
