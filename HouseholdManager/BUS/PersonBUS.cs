@@ -42,7 +42,7 @@ namespace HouseholdManager.BUS
         {
             DataTable data = PersonDAO.Instance.GetNewPerson();
 
-            if (data.Rows.Count > 0) return new Person(data?.Rows[0]);
+            if (data.Rows.Count > 0) return new Person(data.Rows[0]);
 
             return null;
         }

@@ -87,8 +87,8 @@ namespace HouseholdManager.GUI
             set
             {
                 _buttonFont = value;
-                Help.SetButtonFont(
-                    new List<SimpleButton>
+                Help.SetControlFont(
+                    new List<Control>
                     { btnSearch,
                         btnShow,
                         btnInsert,

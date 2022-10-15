@@ -64,8 +64,8 @@ namespace HouseholdManager.GUI
 
                 LoadButtonFont(_buttonFont);
 
-                Help.SetButtonFont(
-                    new List<SimpleButton> 
+                Help.SetControlFont(
+                    new List<Control> 
                     { 
                         btnButtonFont, 
                         btnHeaderFont, 

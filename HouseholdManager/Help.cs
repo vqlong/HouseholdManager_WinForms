@@ -1,5 +1,4 @@
-﻿using DevExpress.XtraEditors;
-using HouseholdManager.DTO;
+﻿using HouseholdManager.DTO;
 using HouseholdManager.GUI;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +12,43 @@ namespace HouseholdManager
 {
     public static class Help
     {
+        /// <summary>
+        /// Phân trang cho list, lấy về trang thứ pageNumber với mỗi trang có số hàng là pageSize.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public static List<T> GetPage<T>(List<T> list, int pageNumber = 1, int pageSize = 40)
+        {
+            if (list == null || pageSize == 0 || pageNumber <= 0) return null;
+
+            //Nếu chọn page cuối
+            if (pageNumber == GetTotalPages(list, pageSize)) 
+                return list.GetRange((pageNumber - 1) * pageSize, list.Count % pageSize);
+
+            return list.GetRange((pageNumber - 1)*pageSize, pageSize);
+        }
+
+        /// <summary>
+        /// Lấy tổng số trang của list với mỗi trang có số hàng là pageSize.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public static int GetTotalPages<T>(List<T> list, int pageSize = 40)
+        {
+            if (list == null || pageSize == 0) return 0;
+
+            int total = list.Count / pageSize;
+
+            if (list.Count % pageSize != 0) total++;
+
+            return total;
+        }
+
         /// <summary>
         /// Chuyển chuỗi sang dạng không dấu.
         /// </summary>
@@ -97,13 +133,13 @@ namespace HouseholdManager
                 
         }
 
-        public static void SetButtonFont(List<SimpleButton> list, Font font)
+        public static void SetControlFont(List<Control> list, Font font)
         {
             if (list.Count > 0)
             {
-                foreach (var button in list)
+                foreach (var control in list)
                 {
-                    button.Font = font;
+                    control.Font = font;
                 }
             }
 

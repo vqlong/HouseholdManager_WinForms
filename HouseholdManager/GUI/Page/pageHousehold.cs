@@ -23,6 +23,8 @@ namespace HouseholdManager.GUI
             Account = account;
         }
 
+        #region Property
+
         Account _account;
         public Account Account
         {
@@ -83,9 +85,9 @@ namespace HouseholdManager.GUI
         /// <summary>
         /// Dùng để truyền ID vừa lựa chọn bằng nút btnSelect cho các page binding đến page này.
         /// </summary>
-        public int SelectedID 
-        { 
-            get => _selectedID; 
+        public int SelectedID
+        {
+            get => _selectedID;
             set
             {
                 _selectedID = value;
@@ -93,13 +95,13 @@ namespace HouseholdManager.GUI
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedID"));
             }
         }
-       
+
         DisplayMode _mode;
         /// <summary>
         /// Thiết lập chế độ hiển thị cho pageHousehold.
         /// </summary>
-        public DisplayMode Mode 
-        { 
+        public DisplayMode Mode
+        {
             get => _mode;
             set
             {
@@ -137,8 +139,8 @@ namespace HouseholdManager.GUI
             set
             {
                 _buttonFont = value;
-                Help.SetButtonFont(
-                    new List<SimpleButton>
+                Help.SetControlFont(
+                    new List<Control>
                     { btnSearch,
                         btnShow,
                         btnInsert,
@@ -185,6 +187,7 @@ namespace HouseholdManager.GUI
             }
         }
 
+        #endregion
         public void ChangeDisplayMode(DisplayMode mode)
         {
             if(mode == DisplayMode.Normal)
@@ -230,7 +233,7 @@ namespace HouseholdManager.GUI
             //Khi mới khởi tạo pageHousehold hiển thị các chức năng CRUD bình thường
             Mode = DisplayMode.Normal;
 
-            //Kết quả form trả về khi các nút này được click
+            //Kết quả form trả về khi các nút này được click (trong DisplayMode.Select)
             btnCancel.DialogResult = DialogResult.Cancel;
             btnSelect.DialogResult = DialogResult.OK;
 

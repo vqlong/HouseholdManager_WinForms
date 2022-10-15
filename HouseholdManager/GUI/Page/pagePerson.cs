@@ -1,5 +1,4 @@
-﻿using DevExpress.XtraEditors;
-using HouseholdManager.BUS;
+﻿using HouseholdManager.BUS;
 using HouseholdManager.DTO;
 using System;
 using System.Collections.Generic;
@@ -7,17 +6,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace HouseholdManager.GUI
 {
-    /*
-     * Khi insert, update, delete chỉ cập nhật lại hàng tương ứng trên GridView
-     * Không load lại toàn bộ database
-     * 
-     */
     public partial class pagePerson : DevExpress.XtraEditors.XtraUserControl, INotifyPropertyChanged, IMode
     {
         public pagePerson(Account account)
@@ -26,13 +19,15 @@ namespace HouseholdManager.GUI
 
             Initialize();
 
-            LoadData();
-
             LoadEvent();
+
+            LoadBinding();
 
             Account = account;
 
         }
+
+        #region Property
 
         Account _account;
         public Account Account
@@ -41,7 +36,7 @@ namespace HouseholdManager.GUI
             set
             {
                 _account = value;
-                
+
                 Help.SetPrivilege(AppSetting.Instance.PersonPrivilege, listPrivilege);
             }
         }
@@ -72,11 +67,9 @@ namespace HouseholdManager.GUI
 
                 householdBindingSource.DataSource = _listHousehold;
                 householdBindingSource.ResetBindings(false);
-                FormatHousehold();
-
             }
         }
-   
+
         /// <summary>
         /// Dùng để binding với SelectedID của pHousehold.
         /// </summary>
@@ -123,8 +116,8 @@ namespace HouseholdManager.GUI
             set
             {
                 _buttonFont = value;
-                Help.SetButtonFont(
-                    new List<SimpleButton>
+                Help.SetControlFont(
+                    new List<Control>
                     { btnSearch,
                         btnShow,
                         btnInsert,
@@ -133,9 +126,14 @@ namespace HouseholdManager.GUI
                         btnExportExcel,
                         btnImportExcel,
                         btnSelect,
-                        btnCancel                       
+                        btnCancel,
+                        btnFirst,
+                        btnPrevious,
+                        btnNext,
+                        btnLast,
+                        labelTotalPages
                     },
-                    _buttonFont); 
+                    _buttonFont);
             }
         }
 
@@ -169,7 +167,12 @@ namespace HouseholdManager.GUI
                         btnImportExcel,
                         btnSelect,
                         btnCancel,
-                        labelStatistic
+                        btnFirst,
+                        btnPrevious,
+                        btnNext,
+                        btnLast,
+                        labelStatistic,
+                        labelTotalPages
                     },
                     _textColor);
             }
@@ -178,10 +181,13 @@ namespace HouseholdManager.GUI
         /// <summary>
         /// Danh sách các control binding cho pageAdmin để có thể cài đặt Enabled = true/false bởi admin.
         /// </summary>
-        public List<Control> listPrivilege { get; set; }
+        public List<Control> listPrivilege { get; set; } 
+
+        #endregion
 
         public void ChangeDisplayMode(DisplayMode mode)
         {
+            //Hiển thị bình thường trên form fMain
             if (mode == DisplayMode.Normal)
             {
                 panelSelect.Visible = false;
@@ -197,6 +203,7 @@ namespace HouseholdManager.GUI
                 return;
             }
 
+            //Hiện nút Lựa chọn 1 nhân khẩu khi gắn trên form fSelect
             btnInsert.Enabled = false;
             btnUpdate.Enabled = false;
             btnDelete.Enabled = false;
@@ -214,8 +221,19 @@ namespace HouseholdManager.GUI
 
         void Initialize()
         {
-            dtgvPerson.Text = "Bảng nhân khẩu";
+            //Khởi tạo DataSource
+            dtgvPerson.DataSource = personBindingSource;
+            dtgvHousehold.DataSource = householdBindingSource;
 
+            ListPerson = PersonBUS.Instance.GetListPerson();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
+            nmTotalPages.Value = Help.GetTotalPages(ListPerson);
+            personBindingSource.DataSource = Help.GetPage(ListPerson);
+
+            //Chỉnh tên cột, căn giữa...
+            FormatPerson();
+
+            dtgvPerson.Text = "Bảng nhân khẩu";
             listPrivilege = new List<Control>
             {
                 btnSearch,
@@ -226,7 +244,11 @@ namespace HouseholdManager.GUI
                 btnExportExcel,
                 btnImportExcel,
                 btnSelect,
-                btnCancel, 
+                btnCancel,
+                btnFirst,
+                btnPrevious,
+                btnNext,
+                btnLast,
                 dtgvPerson
             };
 
@@ -265,63 +287,23 @@ namespace HouseholdManager.GUI
             lkuRelation.Properties.ShowHeader = false;
             lkuRelation.Properties.ShowLines = false;
 
+            //Co lại form
             Height = 700;
+            panelStatistic.Height = 334;
 
             //Khi mới khởi tạo pagePerson hiển thị các chức năng CRUD bình thường
             Mode = DisplayMode.Normal;
 
-            //Kết quả form trả về khi các nút này được click
+            //Kết quả form trả về khi các nút này được click (trong DisplayMode.Select)
             btnCancel.DialogResult = DialogResult.Cancel;
-            btnSelect.DialogResult = DialogResult.OK;
+            btnSelect.DialogResult = DialogResult.OK; 
 
             AcceptButton = btnSearch;
           
         }
 
-        void LoadData()
-        {
-            //Khởi tạo DataSource cho GridView
-            dtgvPerson.DataSource = personBindingSource;
-            dtgvHousehold.DataSource = householdBindingSource;
-
-            ListPerson = PersonBUS.Instance.GetListPerson();
-            personBindingSource.DataSource = ListPerson;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
-           
-            dtgvPerson.Columns[3].DefaultCellStyle.Format = "dd/MM/yyyy";
-
-            dtgvPerson.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dtgvPerson.Columns[6].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-            dtgvPerson.Columns[0].HeaderText = "ID";
-            dtgvPerson.Columns[1].HeaderText = "Họ tên";
-            dtgvPerson.Columns[2].HeaderText = "Giới tính";
-            dtgvPerson.Columns[3].HeaderText = "Ngày sinh";
-            dtgvPerson.Columns[4].HeaderText = "CMND";
-            dtgvPerson.Columns[5].HeaderText = "Quê quán";
-            dtgvPerson.Columns[6].HeaderText = "ID Hộ";
-            dtgvPerson.Columns[7].HeaderText = "Quan hệ";
-
-            dtgvPerson.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dtgvPerson.Columns[0].Width = 40;
-            dtgvPerson.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dtgvPerson.Columns[6].Width = 80;
-
-            Help.SetHeaderFont(new List<DataGridView> { dtgvHousehold, dtgvPerson} , HeaderFont);
-
-            Help.SetRowFont(new List<DataGridView> { dtgvHousehold, dtgvPerson }, RowFont); 
-
-            //Load lại binding mỗi khi dtgvPerson.DataSource thay đổi
-            LoadBinding();
-        }
-
         void LoadBinding()
         {
-            foreach (Control control in panelInfo.Controls)
-            {
-                if (!(control is Label)) control.DataBindings.Clear();
-            }
-
             nmID.DataBindings.Add("Value", dtgvPerson.DataSource, "ID", false, DataSourceUpdateMode.Never);
             txbName.DataBindings.Add("Text", dtgvPerson.DataSource, "Name", false, DataSourceUpdateMode.Never);
             lkuGender.DataBindings.Add("EditValue", dtgvPerson.DataSource, "Gender", false, DataSourceUpdateMode.Never);
@@ -345,21 +327,28 @@ namespace HouseholdManager.GUI
                 householdBindingSource.Insert(index, HouseholdBUS.Instance.GetHouseholdByID(person.HouseholdID));
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
 
-                //Hiển thị lại nhân khẩu vừa insert lên dtgvPerson, notify cho các page khác biết
-                personBindingSource.Add(person);
-                //Nếu dtgvPerson.DataSource đang là personBindSource thì mới bôi đen hàng vừa thêm vào
-                //Ngược lại (dtgvPerson.DataSource đang gán bởi hàm SearchPerson) thì thôi
-                if (dtgvPerson.DataSource.Equals(personBindingSource))
-                    dtgvPerson.CurrentCell = dtgvPerson.Rows[dtgvPerson.RowCount - 1].Cells[1];
-
+                //Bổ sung nhân khẩu vừa insert vào ListPerson, notify cho các page khác biết
+                ListPerson.Add(person);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
 
-                
+                //Tính lại tổng số trang
+                nmTotalPages.Value = Help.GetTotalPages(ListPerson);
+                //Chạy đến trang cuối nơi có nhân khẩu vừa insert
+                personBindingSource.DataSource = Help.GetPage(ListPerson, (int)nmTotalPages.Value);
 
-                ////LoadData(); 
+                //Highlight nhân khẩu vừa insert
+                dtgvPerson.CurrentCell = dtgvPerson.Rows[dtgvPerson.RowCount - 1].Cells[1];
             };
 
-            btnShow.Click += delegate { LoadData(); };
+            btnShow.Click += delegate 
+            {
+                //Click nút Xem sẽ load lại ListPerson sắp xếp theo cột ID
+                ListPerson = PersonBUS.Instance.GetListPerson();
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
+                nmTotalPages.Value = Help.GetTotalPages(ListPerson);
+                personBindingSource.DataSource = Help.GetPage(ListPerson);
+                nmPageNumber.Value = 1;
+            };
 
             btnInsert.Click += delegate { fInsert.GetInstance(InsertMode.Person).ShowDialog(); };
 
@@ -372,46 +361,48 @@ namespace HouseholdManager.GUI
             btnImportExcel.Click += delegate { LoadFileExcel(); };
 
             btnExportExcel.Click += delegate { CreateFileExcel(); };
-            
+
+            //Chuyển trang
+            btnPrevious.Click += delegate { if (nmPageNumber.Value > 1) nmPageNumber.Value--; };
+            btnNext.Click += delegate { if (nmPageNumber.Value < nmTotalPages.Value) nmPageNumber.Value++; };
+            btnFirst.Click += delegate { nmPageNumber.Value = 1; };
+            btnLast.Click += delegate { nmPageNumber.Value = nmTotalPages.Value; };
+            nmPageNumber.ValueChanged += delegate { personBindingSource.DataSource = Help.GetPage(ListPerson, (int)nmPageNumber.Value); };
+            nmPageNumber.ButtonPressed += delegate { personBindingSource.DataSource = Help.GetPage(ListPerson, (int)nmPageNumber.Value); };
+            nmPageNumber.Spin += delegate { personBindingSource.DataSource = Help.GetPage(ListPerson, (int)nmPageNumber.Value); };
+
+            //Số trang max có thể chọn được trên nmPageNumber luôn bằng tổng số trang
+            nmTotalPages.ValueChanged += delegate { nmPageNumber.Properties.MaxValue = nmTotalPages.Value; };
+
             dtgvPerson.CellClick += (s, e) => 
-            {
-                //Click vào cell ID để chọn toàn bộ GridView
-                if (e.ColumnIndex == 0 && e.RowIndex == -1)
-                {
-                    dtgvPerson.SelectAll();
-
-                    return;
-                }
-                
+            {               
                 //Click vào header cột nào sẽ sắp xếp theo cột đó
-                var list = new List<Person>();
+                if (e.ColumnIndex == 0 && e.RowIndex == -1) ListPerson = PersonBUS.Instance.GetListPerson("ID");
+                if (e.ColumnIndex == 1 && e.RowIndex == -1) ListPerson = PersonBUS.Instance.GetListPerson("Name");
+                if (e.ColumnIndex == 2 && e.RowIndex == -1) ListPerson = PersonBUS.Instance.GetListPerson("Gender");
+                if (e.ColumnIndex == 3 && e.RowIndex == -1) ListPerson = PersonBUS.Instance.GetListPerson("DateOfBirth");
+                if (e.ColumnIndex == 4 && e.RowIndex == -1) ListPerson = PersonBUS.Instance.GetListPerson("CMND");
+                if (e.ColumnIndex == 5 && e.RowIndex == -1) ListPerson = PersonBUS.Instance.GetListPerson("Address");
+                if (e.ColumnIndex == 6 && e.RowIndex == -1) ListPerson = PersonBUS.Instance.GetListPerson("HouseholdID");
+                if (e.ColumnIndex == 7 && e.RowIndex == -1) ListPerson = PersonBUS.Instance.GetListPerson("Relation");
 
-                if (e.ColumnIndex == 1 && e.RowIndex == -1) list = PersonBUS.Instance.GetListPerson("Name");
-                if (e.ColumnIndex == 2 && e.RowIndex == -1) list = PersonBUS.Instance.GetListPerson("Gender");
-                if (e.ColumnIndex == 3 && e.RowIndex == -1) list = PersonBUS.Instance.GetListPerson("DateOfBirth");
-                if (e.ColumnIndex == 4 && e.RowIndex == -1) list = PersonBUS.Instance.GetListPerson("CMND");
-                if (e.ColumnIndex == 5 && e.RowIndex == -1) list = PersonBUS.Instance.GetListPerson("Address");
-                if (e.ColumnIndex == 6 && e.RowIndex == -1) list = PersonBUS.Instance.GetListPerson("HouseholdID");
-                if (e.ColumnIndex == 7 && e.RowIndex == -1) list = PersonBUS.Instance.GetListPerson("Relation");
-
-                if (list.Count > 0)
+                if (e.RowIndex == -1)
                 {
-                    ListPerson.Clear();
+                    //Load lại trang đã sắp xếp lại
+                    personBindingSource.DataSource = Help.GetPage(ListPerson);
 
-                    ListPerson.AddRange(list);
-
-                    personBindingSource.ResetBindings(false);
+                    nmPageNumber.Value = 1;
                 }
 
-                
             };
+
+            //Click đúp để bôi đen tất cả
+            dtgvPerson.CellDoubleClick += delegate { dtgvPerson.SelectAll(); };
 
             //Hiện thống kê về các hàng được chọn
             dtgvPerson.SelectionChanged += delegate { LoadStatistic(); };
-
-            
+ 
             ////Hiện Description của enum thay vì tên enum
-            ////(chậm khi GridView load nhiều hàng => chuyển sang dùng TypeConverter để nhanh hơn)
             //dtgvPerson.CellFormatting += (s, e) =>
             //{
             //    if (e.ColumnIndex != 2 && e.ColumnIndex != 7) return;
@@ -421,7 +412,6 @@ namespace HouseholdManager.GUI
             //    e.Value = description.Description;
             //};
             
-
             //Highlight hộ khẩu khi có thành viên được chọn trên dtgvPerson
             dtgvPerson.CurrentCellChanged += delegate
             {
@@ -433,6 +423,9 @@ namespace HouseholdManager.GUI
                         dtgvHousehold.CurrentCell = row.Cells[0];
                 }
             };
+
+            //Khi nhận data lần đầu tiên
+            dtgvHousehold.BindingContextChanged += delegate { FormatHousehold(); };
 
             //Nhấn btnSelect (trong insert mode) sẽ gán giá trị cho SelectedID và thoát form
             btnSelect.Click += delegate { SelectedID = (int)nmID.Value; (Parent.Parent as Form).Close(); };
@@ -481,18 +474,20 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Xoá nhân khẩu thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                //Xoá nhân khẩu, reset lại dtgvPerson và báo cho những thằng đang binding với ListPerson bên ngoài
-                var person = ListPerson.Find(p => p.ID == id);
-                personBindingSource.Remove(person);
+                //Xoá nhân khẩu này và báo cho những thằng đang binding với ListPerson bên ngoài
+                ListPerson.RemoveAll(p => p.ID == id);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
-                
+
+                nmTotalPages.Value = Help.GetTotalPages(ListPerson);
+
                 //dtgvHousehold: khi xoá bớt nhân khẩu chỉ cần update lại số lượng thành viên gia đình
-                var household = ListHousehold.Find(h => h.ID == person.HouseholdID);
+                var household = ListHousehold.Find(h => h.ID == nmHouseholdID.Value);
                 household.MemberCount = ListPerson.Count(p => p.HouseholdID == household.ID);
                 householdBindingSource.ResetBindings(false);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
 
-                ////LoadData();
+                //Load lại trang
+                personBindingSource.DataSource = Help.GetPage(ListPerson, (int)nmPageNumber.Value);
 
                 return;
             }
@@ -534,37 +529,36 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Cập nhật nhân khẩu thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                //dtgvHousehold
-                //Lấy ra person muốn update trên ListPerson (chưa update theo database)
-                var person = ListPerson.Find(p => p.ID == id);
-                //Lấy ra household cũ (nếu lựa chọn chuyển khẩu)
-                var household = ListHousehold.Find(h => h.ID == person.HouseholdID);
-                                              
-                //dtgvPerson
-                //Tìm index của nhân khẩu muốn cập nhật, xoá nó khỏi dtgvPerson và chèn lại nhân khẩu mới với thuộc tính được cập nhật
-                var index = ListPerson.FindIndex(p => p.ID == id);
-                personBindingSource.RemoveAt(index);
-                personBindingSource.Insert(index, PersonBUS.Instance.GetPersonByID(id));               
-                //Báo cho đồng bọn binding thay đổi data theo
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
+                //Lấy ra person muốn update trên ListPerson (person cũ chưa update theo database)
+                var personOld = ListPerson.Find(p => p.ID == id);
 
-                //Sau khi person update
-                //update household mới (nếu lựa chọn chuyển khẩu)
+                //dtgvPerson
+                //Tìm index của nhân khẩu muốn cập nhật, xoá nó khỏi ListPerson và chèn lại nhân khẩu mới với thuộc tính được cập nhật
+                var index = ListPerson.FindIndex(p => p.ID == id);
+                ListPerson.RemoveAt(index);
+                //Peson mới update dưới database
+                var personNew = PersonBUS.Instance.GetPersonByID(id);
+                ListPerson.Insert(index, personNew);
+                
+                //dtgvHousehold
+                //Sau khi person update => update household mới (nếu lựa chọn chuyển khẩu)
                 //Nếu update 1 người là chủ hộ thì Owner và Address của hộ khẩu cũng thay đổi theo => load lại hoàn toàn hộ khẩu đó
                 var index2 = ListHousehold.FindIndex(h => h.ID == householdID);
                 householdBindingSource.RemoveAt(index2);
                 householdBindingSource.Insert(index2, HouseholdBUS.Instance.GetHouseholdByID(householdID));
 
-                //Sau khi xoá đi - chèn lại, active lại cell này để dtgvPerson và dtgvHousehold highlight lại các hàng lựa chọn 
-                if (dtgvPerson.DataSource.Equals(personBindingSource)) 
-                    dtgvPerson.CurrentCell = dtgvPerson.Rows[index].Cells[1];
-
-                //update household cũ, chỉ cần tính lại MemberCount
+                //Sau khi update lại dtgvHousehold => Load lại dtgvPerson để hộ khẩu trên dtgvHousehold được highlight đúng theo active cell
+                personBindingSource.DataSource = Help.GetPage(ListPerson, (int)nmPageNumber.Value);
+                //Báo cho đồng bọn binding thay đổi data theo
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
+                
+                //Update household cũ 
+                //Lấy ra household cũ (nếu lựa chọn chuyển khẩu)
+                var household = ListHousehold.Find(h => h.ID == personOld.HouseholdID);
+                //Chỉ cần tính lại MemberCount
                 household.MemberCount = ListPerson.Count(p => p.HouseholdID == household.ID);
                 householdBindingSource.ResetBindings(false);                
-
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
-                ////LoadData();
 
                 return;
             }
@@ -574,7 +568,8 @@ namespace HouseholdManager.GUI
 
         void SearchPerson(string input)
         {
-            var list = new List<Person>(ListPerson); //this.ListPerson.GetRange(0, this.ListPerson.Count);
+            //Tìm kiếm bằng cách xoá hết các person không khớp
+            var list = new List<Person>(ListPerson);
 
             input = input.ToUnsigned().ToLower();
 
@@ -583,11 +578,7 @@ namespace HouseholdManager.GUI
                                   && person.DateOfBirth.ToString().ToUnsigned().ToLower().Contains(input) == false
                                   && person.Cmnd.Contains(input) == false);
 
-            dtgvPerson.DataSource = list;
-
-            //Load lại binding vì dtgvPerson.DataSource đã thay đổi
-            LoadBinding();
-
+            personBindingSource.DataSource = list;
         }
 
         void LoadFileExcel()
@@ -608,7 +599,7 @@ namespace HouseholdManager.GUI
                 Thread thread = new Thread(() => 
                 {
                     var result = PersonBUS.Instance.LoadFileExcel(dialog.FileName, progressExcel, progressPanel);
-                    
+
                     btnExportExcel.Visible = true;
 
                     progressPanel.WaitAnimationType = DevExpress.Utils.Animation.WaitingAnimatorType.Default;
@@ -617,19 +608,25 @@ namespace HouseholdManager.GUI
 
                     progressExcel.Visible = false;
                     progressExcel.Position = 0;
-
+                    
                     if (result)
                     {
                         MessageBox.Show("Nhập dữ liệu vào database thành công.\n" +
                                         "Nhấn nút [Xem] trong mục Quản lý nhân khẩu để hiển thị dữ liệu nhân khẩu mới.\n" +
                                         "Nhấn nút [Xem] trong mục Quản lý hộ khẩu để hiển thị dữ liệu hộ khẩu mới.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                        return;
+                        //Load lại ListPerson
+                        ListPerson = PersonBUS.Instance.GetListPerson();
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Nhập dữ liệu thất bại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
 
-                    MessageBox.Show("Nhập dữ liệu thất bại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);;
-
                     CheckForIllegalCrossThreadCalls = true;
+
                 });
 
                 thread.IsBackground = true;
@@ -711,15 +708,12 @@ namespace HouseholdManager.GUI
                         return;
                     }
 
-                    MessageBox.Show("Xuất dữ liệu thất bại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error); ;
-
-                    
+                    MessageBox.Show("Xuất dữ liệu thất bại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error); ;                  
                 });
 
                 thread.IsBackground = true;
                 thread.Priority = ThreadPriority.AboveNormal;
                 thread.Start();
-
             }
                 
         }       
@@ -739,6 +733,28 @@ namespace HouseholdManager.GUI
 
             dtgvHousehold.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dtgvHousehold.Columns[3].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+        }
+
+        void FormatPerson()
+        {
+            dtgvPerson.Columns[3].DefaultCellStyle.Format = "dd/MM/yyyy";
+
+            dtgvPerson.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dtgvPerson.Columns[6].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            dtgvPerson.Columns[0].HeaderText = "ID";
+            dtgvPerson.Columns[1].HeaderText = "Họ tên";
+            dtgvPerson.Columns[2].HeaderText = "Giới tính";
+            dtgvPerson.Columns[3].HeaderText = "Ngày sinh";
+            dtgvPerson.Columns[4].HeaderText = "CMND";
+            dtgvPerson.Columns[5].HeaderText = "Quê quán";
+            dtgvPerson.Columns[6].HeaderText = "ID Hộ";
+            dtgvPerson.Columns[7].HeaderText = "Quan hệ";
+
+            dtgvPerson.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dtgvPerson.Columns[0].Width = 40;
+            dtgvPerson.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dtgvPerson.Columns[6].Width = 80;
         }
     }
 }

@@ -28,12 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions12 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
-            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject45 = new DevExpress.Utils.SerializableAppearanceObject();
-            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject46 = new DevExpress.Utils.SerializableAppearanceObject();
-            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject47 = new DevExpress.Utils.SerializableAppearanceObject();
-            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject48 = new DevExpress.Utils.SerializableAppearanceObject();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(pagePerson));
+            DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions10 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject37 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject38 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject39 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject40 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions11 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject41 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject42 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject43 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject44 = new DevExpress.Utils.SerializableAppearanceObject();
             DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions1 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject1 = new DevExpress.Utils.SerializableAppearanceObject();
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject2 = new DevExpress.Utils.SerializableAppearanceObject();
@@ -69,6 +73,17 @@
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject26 = new DevExpress.Utils.SerializableAppearanceObject();
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject27 = new DevExpress.Utils.SerializableAppearanceObject();
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject28 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions13 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject49 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject50 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject51 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject52 = new DevExpress.Utils.SerializableAppearanceObject();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(pagePerson));
+            DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions14 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject53 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject54 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject55 = new DevExpress.Utils.SerializableAppearanceObject();
+            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject56 = new DevExpress.Utils.SerializableAppearanceObject();
             DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions8 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject29 = new DevExpress.Utils.SerializableAppearanceObject();
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject30 = new DevExpress.Utils.SerializableAppearanceObject();
@@ -79,11 +94,6 @@
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject34 = new DevExpress.Utils.SerializableAppearanceObject();
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject35 = new DevExpress.Utils.SerializableAppearanceObject();
             DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject36 = new DevExpress.Utils.SerializableAppearanceObject();
-            DevExpress.XtraEditors.Controls.EditorButtonImageOptions editorButtonImageOptions10 = new DevExpress.XtraEditors.Controls.EditorButtonImageOptions();
-            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject37 = new DevExpress.Utils.SerializableAppearanceObject();
-            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject38 = new DevExpress.Utils.SerializableAppearanceObject();
-            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject39 = new DevExpress.Utils.SerializableAppearanceObject();
-            DevExpress.Utils.SerializableAppearanceObject serializableAppearanceObject40 = new DevExpress.Utils.SerializableAppearanceObject();
             this.panelAllPage = new System.Windows.Forms.Panel();
             this.panelSelect = new System.Windows.Forms.Panel();
             this.btnCancel = new DevExpress.XtraEditors.SimpleButton();
@@ -117,6 +127,13 @@
             this.txbSearch = new DevExpress.XtraEditors.TextEdit();
             this.btnSearch = new DevExpress.XtraEditors.SimpleButton();
             this.panelGridView = new System.Windows.Forms.Panel();
+            this.labelTotalPages = new System.Windows.Forms.Label();
+            this.nmTotalPages = new DevExpress.XtraEditors.SpinEdit();
+            this.nmPageNumber = new DevExpress.XtraEditors.SpinEdit();
+            this.btnLast = new DevExpress.XtraEditors.SimpleButton();
+            this.btnNext = new DevExpress.XtraEditors.SimpleButton();
+            this.btnPrevious = new DevExpress.XtraEditors.SimpleButton();
+            this.btnFirst = new DevExpress.XtraEditors.SimpleButton();
             this.dtgvHousehold = new System.Windows.Forms.DataGridView();
             this.dtgvPerson = new System.Windows.Forms.DataGridView();
             this.panelInfo = new System.Windows.Forms.Panel();
@@ -159,6 +176,8 @@
             this.panelSearch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txbSearch.Properties)).BeginInit();
             this.panelGridView.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nmTotalPages.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nmPageNumber.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dtgvHousehold)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dtgvPerson)).BeginInit();
             this.panelInfo.SuspendLayout();
@@ -238,7 +257,8 @@
             // 
             // panelStatistic
             // 
-            this.panelStatistic.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelStatistic.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panelStatistic.BackColor = System.Drawing.Color.LightCyan;
             this.panelStatistic.Controls.Add(this.btnExportExcel);
             this.panelStatistic.Controls.Add(this.progressExcel);
@@ -269,6 +289,7 @@
             // 
             // btnExportExcel
             // 
+            this.btnExportExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportExcel.Location = new System.Drawing.Point(197, 293);
             this.btnExportExcel.Name = "btnExportExcel";
             this.btnExportExcel.Size = new System.Drawing.Size(90, 30);
@@ -277,6 +298,7 @@
             // 
             // progressExcel
             // 
+            this.progressExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.progressExcel.Location = new System.Drawing.Point(101, 293);
             this.progressExcel.Name = "progressExcel";
             this.progressExcel.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
@@ -289,6 +311,7 @@
             // 
             // progressPanel
             // 
+            this.progressPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.progressPanel.AnimationSpeed = 55F;
             this.progressPanel.Appearance.BackColor = System.Drawing.Color.Transparent;
             this.progressPanel.Appearance.Options.UseBackColor = true;
@@ -307,6 +330,7 @@
             // 
             // btnImportExcel
             // 
+            this.btnImportExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportExcel.Location = new System.Drawing.Point(293, 293);
             this.btnImportExcel.Name = "btnImportExcel";
             this.btnImportExcel.Size = new System.Drawing.Size(90, 30);
@@ -329,7 +353,7 @@
             this.nmElder.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmElder.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmElder.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions12, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject45, serializableAppearanceObject46, serializableAppearanceObject47, serializableAppearanceObject48, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions10, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject37, serializableAppearanceObject38, serializableAppearanceObject39, serializableAppearanceObject40, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmElder.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmElder.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmElder.Properties.ContextImageOptions.Image")));
             this.nmElder.Size = new System.Drawing.Size(282, 26);
@@ -351,7 +375,7 @@
             this.nmAdult.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmAdult.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmAdult.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions1, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject1, serializableAppearanceObject2, serializableAppearanceObject3, serializableAppearanceObject4, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions11, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject41, serializableAppearanceObject42, serializableAppearanceObject43, serializableAppearanceObject44, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmAdult.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmAdult.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmAdult.Properties.ContextImageOptions.Image")));
             this.nmAdult.Size = new System.Drawing.Size(282, 26);
@@ -373,7 +397,7 @@
             this.nmTeenager.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmTeenager.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmTeenager.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions2, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject5, serializableAppearanceObject6, serializableAppearanceObject7, serializableAppearanceObject8, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions1, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject1, serializableAppearanceObject2, serializableAppearanceObject3, serializableAppearanceObject4, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmTeenager.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmTeenager.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmTeenager.Properties.ContextImageOptions.Image")));
             this.nmTeenager.Size = new System.Drawing.Size(282, 26);
@@ -395,7 +419,7 @@
             this.nmChild.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmChild.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmChild.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions3, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject9, serializableAppearanceObject10, serializableAppearanceObject11, serializableAppearanceObject12, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions2, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject5, serializableAppearanceObject6, serializableAppearanceObject7, serializableAppearanceObject8, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmChild.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmChild.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmChild.Properties.ContextImageOptions.Image")));
             this.nmChild.Size = new System.Drawing.Size(282, 26);
@@ -417,7 +441,7 @@
             this.nmTempResident.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmTempResident.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmTempResident.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions4, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject13, serializableAppearanceObject14, serializableAppearanceObject15, serializableAppearanceObject16, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions3, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject9, serializableAppearanceObject10, serializableAppearanceObject11, serializableAppearanceObject12, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmTempResident.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmTempResident.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmTempResident.Properties.ContextImageOptions.Image")));
             this.nmTempResident.Size = new System.Drawing.Size(282, 26);
@@ -439,7 +463,7 @@
             this.nmPermanentResident.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmPermanentResident.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmPermanentResident.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions5, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject17, serializableAppearanceObject18, serializableAppearanceObject19, serializableAppearanceObject20, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions4, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject13, serializableAppearanceObject14, serializableAppearanceObject15, serializableAppearanceObject16, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmPermanentResident.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmPermanentResident.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmPermanentResident.Properties.ContextImageOptions.Image")));
             this.nmPermanentResident.Size = new System.Drawing.Size(282, 26);
@@ -461,7 +485,7 @@
             this.nmWoman.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmWoman.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmWoman.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions6, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject21, serializableAppearanceObject22, serializableAppearanceObject23, serializableAppearanceObject24, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions5, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject17, serializableAppearanceObject18, serializableAppearanceObject19, serializableAppearanceObject20, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmWoman.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmWoman.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmWoman.Properties.ContextImageOptions.Image")));
             this.nmWoman.Size = new System.Drawing.Size(282, 26);
@@ -483,7 +507,7 @@
             this.nmMan.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmMan.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmMan.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions7, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject25, serializableAppearanceObject26, serializableAppearanceObject27, serializableAppearanceObject28, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions6, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject21, serializableAppearanceObject22, serializableAppearanceObject23, serializableAppearanceObject24, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmMan.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmMan.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmMan.Properties.ContextImageOptions.Image")));
             this.nmMan.Size = new System.Drawing.Size(282, 26);
@@ -595,7 +619,7 @@
             this.nmTotalPerson.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmTotalPerson.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmTotalPerson.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions8, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject29, serializableAppearanceObject30, serializableAppearanceObject31, serializableAppearanceObject32, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions7, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject25, serializableAppearanceObject26, serializableAppearanceObject27, serializableAppearanceObject28, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmTotalPerson.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmTotalPerson.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmTotalPerson.Properties.ContextImageOptions.Image")));
             this.nmTotalPerson.Properties.MaxValue = new decimal(new int[] {
@@ -654,12 +678,147 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelGridView.BackColor = System.Drawing.Color.LightCyan;
+            this.panelGridView.Controls.Add(this.labelTotalPages);
+            this.panelGridView.Controls.Add(this.nmTotalPages);
+            this.panelGridView.Controls.Add(this.nmPageNumber);
+            this.panelGridView.Controls.Add(this.btnLast);
+            this.panelGridView.Controls.Add(this.btnNext);
+            this.panelGridView.Controls.Add(this.btnPrevious);
+            this.panelGridView.Controls.Add(this.btnFirst);
             this.panelGridView.Controls.Add(this.dtgvHousehold);
             this.panelGridView.Controls.Add(this.dtgvPerson);
             this.panelGridView.Location = new System.Drawing.Point(3, 45);
             this.panelGridView.Name = "panelGridView";
             this.panelGridView.Size = new System.Drawing.Size(801, 752);
             this.panelGridView.TabIndex = 10;
+            // 
+            // labelTotalPages
+            // 
+            this.labelTotalPages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelTotalPages.Location = new System.Drawing.Point(483, 571);
+            this.labelTotalPages.Name = "labelTotalPages";
+            this.labelTotalPages.Size = new System.Drawing.Size(219, 30);
+            this.labelTotalPages.TabIndex = 47;
+            this.labelTotalPages.Text = "Tổng số trang:";
+            this.labelTotalPages.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // nmTotalPages
+            // 
+            this.nmTotalPages.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.nmTotalPages.EditValue = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nmTotalPages.Location = new System.Drawing.Point(708, 571);
+            this.nmTotalPages.Name = "nmTotalPages";
+            this.nmTotalPages.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.nmTotalPages.Properties.Appearance.Options.UseFont = true;
+            this.nmTotalPages.Properties.Appearance.Options.UseImage = true;
+            this.nmTotalPages.Properties.Appearance.Options.UseTextOptions = true;
+            this.nmTotalPages.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
+            this.nmTotalPages.Properties.AutoHeight = false;
+            this.nmTotalPages.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
+            serializableAppearanceObject49.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            serializableAppearanceObject49.ForeColor = System.Drawing.Color.ForestGreen;
+            serializableAppearanceObject49.Options.UseFont = true;
+            serializableAppearanceObject49.Options.UseForeColor = true;
+            this.nmTotalPages.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions13, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject49, serializableAppearanceObject50, serializableAppearanceObject51, serializableAppearanceObject52, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            this.nmTotalPages.Properties.ButtonsStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
+            this.nmTotalPages.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
+            this.nmTotalPages.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmTotalPages.Properties.ContextImageOptions.Image")));
+            this.nmTotalPages.Properties.IsFloatValue = false;
+            this.nmTotalPages.Properties.MaskSettings.Set("mask", "N00");
+            this.nmTotalPages.Properties.MaxValue = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.nmTotalPages.Properties.MinValue = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nmTotalPages.Properties.ReadOnly = true;
+            this.nmTotalPages.Size = new System.Drawing.Size(90, 30);
+            this.nmTotalPages.TabIndex = 44;
+            // 
+            // nmPageNumber
+            // 
+            this.nmPageNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.nmPageNumber.EditValue = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nmPageNumber.Location = new System.Drawing.Point(195, 571);
+            this.nmPageNumber.Name = "nmPageNumber";
+            this.nmPageNumber.Properties.Appearance.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.nmPageNumber.Properties.Appearance.Options.UseFont = true;
+            this.nmPageNumber.Properties.Appearance.Options.UseImage = true;
+            this.nmPageNumber.Properties.Appearance.Options.UseTextOptions = true;
+            this.nmPageNumber.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
+            this.nmPageNumber.Properties.AutoHeight = false;
+            this.nmPageNumber.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
+            serializableAppearanceObject53.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            serializableAppearanceObject53.ForeColor = System.Drawing.Color.ForestGreen;
+            serializableAppearanceObject53.Options.UseFont = true;
+            serializableAppearanceObject53.Options.UseForeColor = true;
+            this.nmPageNumber.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, true, false, editorButtonImageOptions14, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject53, serializableAppearanceObject54, serializableAppearanceObject55, serializableAppearanceObject56, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            this.nmPageNumber.Properties.ButtonsStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
+            this.nmPageNumber.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
+            this.nmPageNumber.Properties.IsFloatValue = false;
+            this.nmPageNumber.Properties.MaskSettings.Set("mask", "N00");
+            this.nmPageNumber.Properties.MaxValue = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.nmPageNumber.Properties.MinValue = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nmPageNumber.Size = new System.Drawing.Size(90, 30);
+            this.nmPageNumber.TabIndex = 29;
+            // 
+            // btnLast
+            // 
+            this.btnLast.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnLast.Location = new System.Drawing.Point(387, 571);
+            this.btnLast.Name = "btnLast";
+            this.btnLast.Size = new System.Drawing.Size(90, 30);
+            this.btnLast.TabIndex = 43;
+            this.btnLast.Text = ">>";
+            // 
+            // btnNext
+            // 
+            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnNext.Location = new System.Drawing.Point(291, 571);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(90, 30);
+            this.btnNext.TabIndex = 42;
+            this.btnNext.Text = ">";
+            // 
+            // btnPrevious
+            // 
+            this.btnPrevious.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnPrevious.Location = new System.Drawing.Point(99, 571);
+            this.btnPrevious.Name = "btnPrevious";
+            this.btnPrevious.Size = new System.Drawing.Size(90, 30);
+            this.btnPrevious.TabIndex = 41;
+            this.btnPrevious.Text = "<";
+            // 
+            // btnFirst
+            // 
+            this.btnFirst.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnFirst.Location = new System.Drawing.Point(3, 571);
+            this.btnFirst.Name = "btnFirst";
+            this.btnFirst.Size = new System.Drawing.Size(90, 30);
+            this.btnFirst.TabIndex = 40;
+            this.btnFirst.Text = "<<";
             // 
             // dtgvHousehold
             // 
@@ -673,11 +832,11 @@
             this.dtgvHousehold.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.dtgvHousehold.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dtgvHousehold.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dtgvHousehold.Location = new System.Drawing.Point(3, 571);
+            this.dtgvHousehold.Location = new System.Drawing.Point(3, 604);
             this.dtgvHousehold.Name = "dtgvHousehold";
             this.dtgvHousehold.RowHeadersVisible = false;
             this.dtgvHousehold.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dtgvHousehold.Size = new System.Drawing.Size(795, 178);
+            this.dtgvHousehold.Size = new System.Drawing.Size(795, 145);
             this.dtgvHousehold.TabIndex = 0;
             // 
             // dtgvPerson
@@ -741,7 +900,7 @@
             this.nmID.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmID.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmID.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions9, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject33, serializableAppearanceObject34, serializableAppearanceObject35, serializableAppearanceObject36, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions8, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject29, serializableAppearanceObject30, serializableAppearanceObject31, serializableAppearanceObject32, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmID.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmID.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmID.Properties.ContextImageOptions.Image")));
             this.nmID.Properties.IsFloatValue = false;
@@ -799,12 +958,12 @@
             this.nmHouseholdID.Properties.Appearance.Options.UseTextOptions = true;
             this.nmHouseholdID.Properties.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Center;
             this.nmHouseholdID.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
-            serializableAppearanceObject37.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            serializableAppearanceObject37.ForeColor = System.Drawing.Color.ForestGreen;
-            serializableAppearanceObject37.Options.UseFont = true;
-            serializableAppearanceObject37.Options.UseForeColor = true;
+            serializableAppearanceObject33.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            serializableAppearanceObject33.ForeColor = System.Drawing.Color.ForestGreen;
+            serializableAppearanceObject33.Options.UseFont = true;
+            serializableAppearanceObject33.Options.UseForeColor = true;
             this.nmHouseholdID.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions10, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject37, serializableAppearanceObject38, serializableAppearanceObject39, serializableAppearanceObject40, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
+            new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo, "", -1, true, false, false, editorButtonImageOptions9, new DevExpress.Utils.KeyShortcut(System.Windows.Forms.Keys.None), serializableAppearanceObject33, serializableAppearanceObject34, serializableAppearanceObject35, serializableAppearanceObject36, "", null, null, DevExpress.Utils.ToolTipAnchor.Default)});
             this.nmHouseholdID.Properties.ButtonsStyle = DevExpress.XtraEditors.Controls.BorderStyles.Simple;
             this.nmHouseholdID.Properties.ContextImageOptions.Alignment = DevExpress.XtraEditors.ContextImageAlignment.Far;
             this.nmHouseholdID.Properties.ContextImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("nmHouseholdID.Properties.ContextImageOptions.Image")));
@@ -1042,6 +1201,8 @@
             this.panelSearch.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.txbSearch.Properties)).EndInit();
             this.panelGridView.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nmTotalPages.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nmPageNumber.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dtgvHousehold)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dtgvPerson)).EndInit();
             this.panelInfo.ResumeLayout(false);
@@ -1120,5 +1281,12 @@
         private DevExpress.XtraEditors.SimpleButton btnCancel;
         private DevExpress.XtraEditors.SimpleButton btnSelect;
         private System.Windows.Forms.Panel panelSelect;
+        private DevExpress.XtraEditors.SpinEdit nmPageNumber;
+        private DevExpress.XtraEditors.SimpleButton btnLast;
+        private DevExpress.XtraEditors.SimpleButton btnNext;
+        private DevExpress.XtraEditors.SimpleButton btnPrevious;
+        private DevExpress.XtraEditors.SimpleButton btnFirst;
+        private DevExpress.XtraEditors.SpinEdit nmTotalPages;
+        private System.Windows.Forms.Label labelTotalPages;
     }
 }
