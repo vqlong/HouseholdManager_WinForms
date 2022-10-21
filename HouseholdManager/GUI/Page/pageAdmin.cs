@@ -5,13 +5,9 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HouseholdManager.GUI
@@ -26,12 +22,12 @@ namespace HouseholdManager.GUI
 
             Initialize();
 
-            LoadData();
-
             LoadBinding();
 
             LoadEvent();
         }
+
+        #region Property
 
         Account _account;
         public Account Account
@@ -44,7 +40,7 @@ namespace HouseholdManager.GUI
                 CheckAccount(_account.Type);
             }
         }
-
+        
         BindingSource accountBindingSource = new BindingSource();
 
         public event EventHandler AccountDeleted;
@@ -131,7 +127,10 @@ namespace HouseholdManager.GUI
                     _textColor);
             }
         }
+        #endregion
 
+        #region Method
+        
         void CheckAccount(AccountType type)
         {
             //Nếu account không phải admin thì thoát luôn pageAdmin này
@@ -154,6 +153,19 @@ namespace HouseholdManager.GUI
             lkuAccountType.Properties.ShowHeader = false;
             lkuAccountType.Properties.ShowLines = false;
 
+            //Khởi tạo DataSource cho GridView
+            dtgvData.DataSource = accountBindingSource;
+
+            accountBindingSource.DataSource = AccountBUS.Instance.GetListAccount();
+
+            dtgvData.Columns[0].HeaderText = "Tên đăng nhập";
+            dtgvData.Columns[1].HeaderText = "Tên hiển thị";
+            dtgvData.Columns[3].HeaderText = "Loại tài khoản";
+
+            dtgvData.Columns[2].Visible = false;
+            dtgvData.Columns[4].Visible = false;
+            dtgvData.Columns[5].Visible = false;
+
             dtgvPerson.Columns[1].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dtgvPerson.Columns[2].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
@@ -169,43 +181,18 @@ namespace HouseholdManager.GUI
             AcceptButton = btnSearch;
         }
 
-        void LoadData()
-        {
-            //Khởi tạo DataSource cho GridView
-            dtgvData.DataSource = accountBindingSource;
-
-            accountBindingSource.DataSource = AccountBUS.Instance.GetListAccount();
-
-            dtgvData.RowsDefaultCellStyle.Font = new Font("Tahoma", 10, FontStyle.Regular);
-
-            dtgvData.Columns[0].HeaderText = "Tên đăng nhập";
-            dtgvData.Columns[1].HeaderText = "Tên hiển thị";
-            dtgvData.Columns[3].HeaderText = "Loại tài khoản";
-
-            dtgvData.Columns[2].Visible = false;
-            dtgvData.Columns[4].Visible = false;
-            dtgvData.Columns[5].Visible = false;
-
-            var font = new Font("Tahoma", 10, FontStyle.Bold);
-            dtgvData.Columns[0].HeaderCell.Style.Font = font;
-            dtgvData.Columns[1].HeaderCell.Style.Font = font;
-            dtgvData.Columns[3].HeaderCell.Style.Font = font;
-
-        }
-
         void LoadBinding()
         {
             txbUsername.DataBindings.Add("Text", dtgvData.DataSource, "UserName", false, DataSourceUpdateMode.Never);
             txbDisplayName.DataBindings.Add("Text", dtgvData.DataSource, "DisplayName", false, DataSourceUpdateMode.Never);
             lkuAccountType.DataBindings.Add("EditValue", dtgvData.DataSource, "Type", false, DataSourceUpdateMode.Never);
-
         }
 
         void LoadEvent()
         {
-            fInsert.GetInstance().AccountInserted += (s, e) => { LoadData(); };
+            fInsert.GetInstance().AccountInserted += (s, e) => { btnShow.PerformClick(); };
 
-            btnShow.Click += delegate { LoadData(); };
+            btnShow.Click += delegate { accountBindingSource.DataSource = AccountBUS.Instance.GetListAccount(); };
 
             btnInsert.Click += delegate { fInsert.GetInstance(InsertMode.Account).ShowDialog(); };
 
@@ -228,7 +215,7 @@ namespace HouseholdManager.GUI
             };
 
             //Hiện Privilege của account được chọn trên dtgvData lên các DataGridView tương ứng
-            dtgvData.CurrentCellChanged += delegate 
+            dtgvData.CurrentCellChanged += delegate
             {
                 if (dtgvData.CurrentCell == null) return;
 
@@ -247,7 +234,7 @@ namespace HouseholdManager.GUI
             };
 
             //Save Privilege của account được chọn trên dtgvData xuống database
-            btnSavePrivilege.Click += delegate 
+            btnSavePrivilege.Click += delegate
             {
                 if (currentSetting == null)
                 {
@@ -271,7 +258,7 @@ namespace HouseholdManager.GUI
                 {
                     MessageBox.Show("Lưu quyền cho tài khoản thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    LoadData();
+                    btnShow.PerformClick();
 
                     return;
                 }
@@ -302,7 +289,7 @@ namespace HouseholdManager.GUI
         /// <param name="listControl"></param>
         /// <param name="privilege"></param>
         void LoadPrivilege(DataGridView view, List<Control> listControl, Dictionary<string, bool> privilege)
-        {           
+        {
             view.Rows.Clear();
 
             //Với mỗi control trong List<Control>, hiển thị lên DataGridView liệu account này có quyền sử dụng control này hay không
@@ -321,7 +308,7 @@ namespace HouseholdManager.GUI
                     }
                 }
 
-                view.Rows.Add(control.Name, control.Text, enable); 
+                view.Rows.Add(control.Name, control.Text, enable);
             }
 
             view.Columns[1].ReadOnly = true;
@@ -353,7 +340,7 @@ namespace HouseholdManager.GUI
 
         void DeleteAccount(string username)
         {
-            if (username == "admin") 
+            if (username == "admin")
             {
                 MessageBox.Show("Bạn không thể xoá chính mình.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
@@ -370,7 +357,7 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Xoá tài khoản thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                LoadData();
+                btnShow.PerformClick();
 
                 AccountDeleted?.Invoke(this, EventArgs.Empty);
 
@@ -405,7 +392,7 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Cập nhật tên hiển thị thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                LoadData();
+                btnShow.PerformClick();
 
                 return;
             }
@@ -455,6 +442,7 @@ namespace HouseholdManager.GUI
             listHighlightCell.ForEach(cell => cell.Selected = true);
         }
 
-        public void ReloadData() => LoadData();
+        public void ReloadData() => btnShow.PerformClick(); 
+        #endregion
     }
 }

@@ -13,6 +13,49 @@ namespace HouseholdManager
     public static class Help
     {
         /// <summary>
+        /// Tìm input trong mỗi property của các phần tử trong source.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="input"></param>
+        /// <returns>1 List mà các phần tử của nó có 1 property chứa input.</returns>
+        public static List<T> Search<T>(List<T> source, string input)
+        {
+            if (string.IsNullOrEmpty(input)) return source;
+
+            //Lấy ra danh sách các property của T
+            var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            //Clone lại source để vừa duyệt vừa sửa
+            var output = new List<T>(source);
+
+            //chuyển sang dạng chữ thường không dấu
+            input = input.ToLower().ToUnsigned();
+
+            //Nếu item nào có  1 thuộc tính mà giá trị của nó bao gồm giá trị tìm kiếm sẽ được giữ lại
+            //Ngược lại, xoá khổi list
+            foreach (T item in source)
+            {
+                var isContained = false;
+
+                foreach (var property in properties)
+                {
+                    if (property.GetValue(item).ToString().ToUnsigned().ToLower().Contains(input))
+                    {
+                        isContained = true;
+
+                        break;
+                    }
+                }
+
+                if (!isContained) output.Remove(item);
+            }
+
+            //List trả về chỉ gồm các item chứa giá trị tìm kiếm
+            return output;  
+        }
+
+        /// <summary>
         /// Phân trang cho list, lấy về trang thứ pageNumber với mỗi trang có số hàng là pageSize.
         /// </summary>
         /// <typeparam name="T"></typeparam>

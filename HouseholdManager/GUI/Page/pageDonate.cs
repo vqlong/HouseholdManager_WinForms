@@ -16,12 +16,14 @@ namespace HouseholdManager.GUI
 
             Initialize();
 
-            LoadData();
+            LoadBinding();
 
             LoadEvent();
 
             Account = account;
         }
+
+        #region Property
 
         Account _account;
         public Account Account
@@ -133,6 +135,9 @@ namespace HouseholdManager.GUI
             }
         }
 
+        #endregion
+
+        #region Method
         void Initialize()
         {
             listPrivilege = new List<Control>
@@ -145,15 +150,6 @@ namespace HouseholdManager.GUI
                 btnSelect
             };
 
-            //Chỉ cần load 1 lần ở đây để binding cho bên pageDonateInfo là đủ
-            ListDonateInfo2 = DonateBUS.Instance.GetListDonateInfo();
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListDonateInfo2"));
-
-            AcceptButton = btnSearch;
-        }
-
-        void LoadData()
-        {
             dtgvData.DataSource = donateBindingSource;
 
             ListDonate = DonateBUS.Instance.GetListDonate();
@@ -176,21 +172,19 @@ namespace HouseholdManager.GUI
             dtgvData.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dtgvData.Columns[0].Width = 40;
 
-            LoadBinding();
+            //Chỉ cần load 1 lần ở đây để binding cho bên pageDonateInfo là đủ
+            ListDonateInfo2 = DonateBUS.Instance.GetListDonateInfo();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListDonateInfo2"));
+
+            AcceptButton = btnSearch;
         }
 
         void LoadBinding()
         {
-            foreach (Control control in panelInfo.Controls)
-            {
-                if (!(control is Label) && !(control is SimpleButton)) control.DataBindings.Clear();
-            }
-
             nmID.DataBindings.Add("Value", dtgvData.DataSource, "ID", false, DataSourceUpdateMode.Never);
             txbName.DataBindings.Add("Text", dtgvData.DataSource, "Name", false, DataSourceUpdateMode.Never);
             dtDateArise.DataBindings.Add("EditValue", dtgvData.DataSource, "DateArise", false, DataSourceUpdateMode.Never);
             nmMinValue.DataBindings.Add("Value", dtgvData.DataSource, "MinValue", false, DataSourceUpdateMode.Never);
-
         }
 
         void LoadEvent()
@@ -199,13 +193,15 @@ namespace HouseholdManager.GUI
             {
                 donateBindingSource.Add((Donate)(e as InsertedEventArgs).Inserted);
 
-                //Nếu dtgvData.DataSource đang là donateBindSource thì mới bôi đen hàng vừa thêm vào
-                //Ngược lại (dtgvData.DataSource đang gán bởi hàm SearchFee) thì thôi
-                if (dtgvData.DataSource.Equals(donateBindingSource)) dtgvData.CurrentCell = dtgvData.Rows[dtgvData.RowCount - 1].Cells[1];
+                dtgvData.CurrentCell = dtgvData.Rows[dtgvData.RowCount - 1].Cells[1];
 
             };
 
-            btnShow.Click += delegate { LoadData(); };
+            btnShow.Click += delegate
+            {
+                ListDonate = DonateBUS.Instance.GetListDonate();
+                donateBindingSource.DataSource = ListDonate;
+            };
 
             btnInsert.Click += delegate { fInsert.GetInstance(InsertMode.Donate).ShowDialog(); };
 
@@ -239,7 +235,8 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Xoá đóng góp thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                LoadData();
+                //Load lại data
+                btnShow.PerformClick();
 
                 ListDonateInfo2.RemoveAll(info => info.DonateID == id);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListDonateInfo2"));
@@ -262,7 +259,8 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Cập nhật đóng góp thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                LoadData();
+                //Load lại data
+                btnShow.PerformClick();
 
                 //Khi thay đổi name của 1 Donate => thay đổi name trong các DonateInfo liên quan đến nó
                 var list = ListDonateInfo2.FindAll(info => info.DonateID == id);
@@ -275,19 +273,7 @@ namespace HouseholdManager.GUI
             MessageBox.Show("Cập nhật nhân khẩu thất bại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        void SearchDonate(string input)
-        {
-            var list = new List<Donate>(ListDonate);
-
-            input = input.ToLower().ToUnsigned();
-
-            list.RemoveAll(donate => donate.Name.ToUnsigned().ToLower().Contains(input) == false
-                                  && donate.DateArise.ToString("dd/MM/yyyy").ToUnsigned().ToLower().Contains(input) == false);
-
-            dtgvData.DataSource = list;
-
-            LoadBinding();
-        }
+        void SearchDonate(string input) => donateBindingSource.DataSource = Help.Search(ListDonate, input);
 
         void DonateByHousehold()
         {
@@ -298,7 +284,7 @@ namespace HouseholdManager.GUI
             var info2 = ListDonateInfo2.FindLast(info => info.HouseholdID == SelectedHouseholdID && info.DonateID == nmID.Value);
 
             if (info2 != null)
-            {   
+            {
                 var result = Help.DialogBox($"Nhà ông (bà) {info2.Owner} đã đóng {info2.Value:0,0} vnđ cho {info2.Name} ngày {info2.DateContribute:dd/MM/yyyy}.\n\n" +
                                             $"Tiếp tục đóng góp?", "Thông báo", "Thôi", "Đóng tiếp");
 
@@ -312,7 +298,7 @@ namespace HouseholdManager.GUI
             var fInsertMoney = new fInsertMoney(household, donate);
 
             //Insert thành công sẽ thêm mới vào GridView đang hiển thị và notify
-            fInsertMoney.DonateInfoInserted += (s, e) => 
+            fInsertMoney.DonateInfoInserted += (s, e) =>
             {
                 var newInfo = (DonateInfo)(e as InsertedEventArgs).Inserted;
                 var newInfo2 = new DonateInfo2(newInfo.ID, newInfo.HouseholdID, newInfo.DonateID, household.Owner, donate.Name, newInfo.DateContribute, newInfo.Value);
@@ -321,6 +307,8 @@ namespace HouseholdManager.GUI
             };
 
             fInsertMoney.ShowDialog();
-        }
+        } 
+
+        #endregion
     }
 }

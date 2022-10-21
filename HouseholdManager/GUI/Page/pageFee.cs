@@ -21,12 +21,14 @@ namespace HouseholdManager.GUI
 
             Initialize();
 
-            LoadData();
+            LoadBinding();
 
             LoadEvent();
 
             Account = account;
         }
+
+        #region Property
 
         Account _account;
         public Account Account
@@ -138,6 +140,10 @@ namespace HouseholdManager.GUI
             }
         }
 
+        #endregion
+
+        #region Method
+
         void Initialize()
         {
             listPrivilege = new List<Control>
@@ -162,21 +168,11 @@ namespace HouseholdManager.GUI
             lkuFactor.Properties.ShowHeader = false;
             lkuFactor.Properties.ShowLines = false;
 
-            //Chỉ cần load 1 lần ở đây để binding cho bên pageFeeInfo là đủ
-            ListFeeInfo2 = FeeBUS.Instance.GetListFeeInfo();
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListFeeInfo2"));
-
-            AcceptButton = btnSearch;
-        }
-
-        void LoadData()
-        {
             dtgvData.DataSource = FeeBindingSource;
 
             ListFee = FeeBUS.Instance.GetListFee();
             FeeBindingSource.DataSource = ListFee;
 
-            dtgvData.RowsDefaultCellStyle.Font = new Font("Tahoma", 10, FontStyle.Regular);
             dtgvData.Columns[2].DefaultCellStyle.Format = "dd/MM/yyyy";
             dtgvData.Columns[3].DefaultCellStyle.FormatProvider = new System.Globalization.CultureInfo("vi-vn");
             dtgvData.Columns[3].DefaultCellStyle.Format = "c0";
@@ -195,23 +191,15 @@ namespace HouseholdManager.GUI
             dtgvData.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dtgvData.Columns[0].Width = 40;
 
-            var font = new Font("Tahoma", 10, FontStyle.Bold);
-            dtgvData.Columns[0].HeaderCell.Style.Font = font;
-            dtgvData.Columns[1].HeaderCell.Style.Font = font;
-            dtgvData.Columns[2].HeaderCell.Style.Font = font;
-            dtgvData.Columns[3].HeaderCell.Style.Font = font;
-            dtgvData.Columns[4].HeaderCell.Style.Font = font;
+            //Chỉ cần load 1 lần ở đây để binding cho bên pageFeeInfo là đủ
+            ListFeeInfo2 = FeeBUS.Instance.GetListFeeInfo();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListFeeInfo2"));
 
-            LoadBinding();
+            AcceptButton = btnSearch;
         }
 
         void LoadBinding()
         {
-            foreach (Control control in panelInfo.Controls)
-            {
-                if (!(control is Label) && !(control is SimpleButton)) control.DataBindings.Clear();
-            }
-
             nmID.DataBindings.Add("Value", dtgvData.DataSource, "ID", false, DataSourceUpdateMode.Never);
             txbName.DataBindings.Add("Text", dtgvData.DataSource, "Name", false, DataSourceUpdateMode.Never);
             dtDateArise.DataBindings.Add("EditValue", dtgvData.DataSource, "DateArise", false, DataSourceUpdateMode.Never);
@@ -225,13 +213,14 @@ namespace HouseholdManager.GUI
             {
                 FeeBindingSource.Add((Fee)(e as InsertedEventArgs).Inserted);
 
-                //Nếu dtgvData.DataSource đang là feeBindSource thì mới bôi đen hàng vừa thêm vào
-                //Ngược lại (dtgvData.DataSource đang gán bởi hàm SearchFee) thì thôi
-                if (dtgvData.DataSource.Equals(FeeBindingSource)) dtgvData.CurrentCell = dtgvData.Rows[dtgvData.RowCount - 1].Cells[1];
-
+                dtgvData.CurrentCell = dtgvData.Rows[dtgvData.RowCount - 1].Cells[1];
             };
 
-            btnShow.Click += delegate { LoadData(); };
+            btnShow.Click += delegate
+            {
+                ListFee = FeeBUS.Instance.GetListFee();
+                FeeBindingSource.DataSource = ListFee;
+            };
 
             btnInsert.Click += delegate { fInsert.GetInstance(InsertMode.Fee).ShowDialog(); };
 
@@ -265,7 +254,8 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Xoá thu phí thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                LoadData();
+                //Load lại data
+                btnShow.PerformClick();
 
                 ListFeeInfo2.RemoveAll(info => info.FeeID == id);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListFeeInfo2"));
@@ -288,7 +278,8 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Cập nhật thu phí thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                LoadData();
+                //Load lại data
+                btnShow.PerformClick();
 
                 //Khi thay đổi name của 1 Fee => thay đổi name trong các FeeInfo liên quan đến nó
                 var list = ListFeeInfo2.FindAll(info => info.FeeID == id);
@@ -301,19 +292,7 @@ namespace HouseholdManager.GUI
             MessageBox.Show("Cập nhật thu phí thất bại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        void SearchFee(string input)
-        {
-            var list = new List<Fee>(ListFee);
-
-            input = input.ToLower().ToUnsigned();
-
-            list.RemoveAll(fee => fee.Name.ToUnsigned().ToLower().Contains(input) == false
-                                  && fee.DateArise.ToString("dd/MM/yyyy").ToUnsigned().ToLower().Contains(input) == false);
-
-            dtgvData.DataSource = list;
-
-            LoadBinding();
-        }
+        void SearchFee(string input) => FeeBindingSource.DataSource = Help.Search(ListFee, input);
 
         void PayByHousehold()
         {
@@ -344,6 +323,8 @@ namespace HouseholdManager.GUI
             };
 
             fInsertMoney.ShowDialog();
-        }
+        } 
+
+        #endregion
     }
 }

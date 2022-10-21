@@ -16,7 +16,7 @@ namespace HouseholdManager.GUI
             
             Initialize();
 
-            LoadData();
+            LoadBinding();
 
             LoadEvent();
 
@@ -230,6 +230,14 @@ namespace HouseholdManager.GUI
                 btnCancel
             };
 
+            dtgvData.DataSource = householdBindingSource;
+            dtgvPerson.DataSource = personBindingSource;
+
+            ListHousehold = HouseholdBUS.Instance.GetListHousehold();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
+
+            FormatHousehold();
+
             //Khi mới khởi tạo pageHousehold hiển thị các chức năng CRUD bình thường
             Mode = DisplayMode.Normal;
 
@@ -240,57 +248,32 @@ namespace HouseholdManager.GUI
             AcceptButton = btnSearch;
         }
 
-        void LoadData()
-        {
-            dtgvData.DataSource = householdBindingSource;
-            dtgvPerson.DataSource = personBindingSource;
-
-            ListHousehold = HouseholdBUS.Instance.GetListHousehold();
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
-
-            dtgvData.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dtgvData.Columns[3].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
-
-            dtgvData.Columns[0].HeaderText = "ID";
-            dtgvData.Columns[1].HeaderText = "Chủ hộ";
-            dtgvData.Columns[2].HeaderText = "Địa chỉ";
-            dtgvData.Columns[3].HeaderText = "Số thành viên";
-
-            dtgvData.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-            dtgvData.Columns[0].Width = 40;
-
-            LoadBinding();
-        }
-
         void LoadBinding()
         {
-            foreach (Control control in panelInfo.Controls)
-            {
-                if (!(control is Label) && !(control is SimpleButton)) control.DataBindings.Clear();
-            }
-
             nmID.DataBindings.Add("Value", dtgvData.DataSource, "ID", false, DataSourceUpdateMode.Never);
             txbOwner.DataBindings.Add("Text", dtgvData.DataSource, "Owner", false, DataSourceUpdateMode.Never);
             txbAddress.DataBindings.Add("Text", dtgvData.DataSource, "Address", false, DataSourceUpdateMode.Never);
             nmMemberCount.DataBindings.Add("Value", dtgvData.DataSource, "MemberCount", false, DataSourceUpdateMode.Never);
-
         }
 
         void LoadEvent()
         {
             fInsert.GetInstance().HouseholdInserted += (s, e) =>
             {
-                householdBindingSource.Add((Household)(e as InsertedEventArgs).Inserted);
+                var household = (Household)(e as InsertedEventArgs).Inserted;
+                //Thêm vào householdBindingSource để hiển thị lên dtgvData hiện tại (có thể đang hiện kết quả search)
+                householdBindingSource.Add(household);
+                //Thêm vào ListHousehold
+                ListHousehold.Add(household);
 
-                //Nếu dtgvData.DataSource đang là householdBindSource thì mới bôi đen hàng vừa thêm vào
-                //Ngược lại (dtgvData.DataSource đang gán bởi hàm SearchHousehold) thì thôi
-                if (dtgvData.DataSource.Equals(householdBindingSource)) dtgvData.CurrentCell = dtgvData.Rows[dtgvData.RowCount - 1].Cells[1];
+                //Bôi đen hàng vừa thêm vào
+                dtgvData.CurrentCell = dtgvData.Rows[dtgvData.RowCount - 1].Cells[1];
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
                 ////LoadData(); 
             };
 
-            btnShow.Click += delegate { LoadData(); };
+            btnShow.Click += delegate { ListHousehold = HouseholdBUS.Instance.GetListHousehold(); };
 
             btnInsert.Click += delegate { fInsert.GetInstance(InsertMode.Household).ShowDialog(); };
 
@@ -299,6 +282,9 @@ namespace HouseholdManager.GUI
             btnUpdate.Click += delegate { UpdateHousehold((int)nmID.Value, txbOwner.Text, txbAddress.Text); };
 
             btnSearch.Click += delegate { SearchHousehold(txbSearch.Text); };
+
+            //Khi nhận data lần đầu tiên
+            //dtgvData.BindingContextChanged += delegate { FormatHousehold(); };
 
             //Click vào cell ID để chọn toàn bộ GridView
             dtgvData.CellClick += (s, e) => { if (e.ColumnIndex == 0 && e.RowIndex == -1) dtgvData.SelectAll(); };
@@ -361,6 +347,7 @@ namespace HouseholdManager.GUI
                 //Xoá trên GridView và notify thay đổi
                 ListHousehold.RemoveAll(household => household.ID == id);
 
+                householdBindingSource.RemoveCurrent();
                 householdBindingSource.ResetBindings(false);
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
@@ -402,17 +389,31 @@ namespace HouseholdManager.GUI
             MessageBox.Show("Cập nhật nhân khẩu thất bại.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        void SearchHousehold(string input)
+        void SearchHousehold(string input) => householdBindingSource.DataSource = Help.Search(ListHousehold, input);
+        //{
+        //    //var list = new List<Household>(ListHousehold);
+
+        //    //input = input.ToLower().ToUnsigned();
+
+        //    //list.RemoveAll(household => household.Owner.ToUnsigned().ToLower().Contains(input) == false);
+
+        //    dtgvData.DataSource = list;
+
+        //    LoadBinding();
+        //}
+
+        void FormatHousehold()
         {
-            var list = new List<Household>(ListHousehold);
+            dtgvData.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dtgvData.Columns[3].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-            input = input.ToLower().ToUnsigned();
+            dtgvData.Columns[0].HeaderText = "ID";
+            dtgvData.Columns[1].HeaderText = "Chủ hộ";
+            dtgvData.Columns[2].HeaderText = "Địa chỉ";
+            dtgvData.Columns[3].HeaderText = "Số thành viên";
 
-            list.RemoveAll(household => household.Owner.ToUnsigned().ToLower().Contains(input) == false);
-
-            dtgvData.DataSource = list;
-
-            LoadBinding();
+            dtgvData.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dtgvData.Columns[0].Width = 40;
         }
 
 

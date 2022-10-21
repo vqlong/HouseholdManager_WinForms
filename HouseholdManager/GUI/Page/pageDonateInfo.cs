@@ -17,18 +17,20 @@ namespace HouseholdManager.GUI
 
             Initialize();
 
-            LoadData();
+            LoadBinding();
 
             LoadEvent();
         }
+
+        #region Property
 
         BindingSource donateInfoBindingSource = new BindingSource();
 
         public SimpleButton AcceptButton { get; private set; }
 
-        List<DonateInfo2> _listDonateInfo2;     
-        public List<DonateInfo2> ListDonateInfo2 
-        { 
+        List<DonateInfo2> _listDonateInfo2;
+        public List<DonateInfo2> ListDonateInfo2
+        {
             get => _listDonateInfo2;
             set
             {
@@ -111,29 +113,19 @@ namespace HouseholdManager.GUI
                     },
                     _textColor);
             }
-        }
+        } 
+
+        #endregion
 
         void Initialize()
         {
-            AcceptButton = btnSearch;
-        }
-
-        void LoadData()
-        {
             dtgvData.DataSource = donateInfoBindingSource;
-            //ListDonateInfo2 = DonateBUS.Instance.GetListDonateInfo();
-            //donateInfoBindingSource.DataSource = ListDonateInfo2;         
-           
-            LoadBinding();
+
+            AcceptButton = btnSearch;
         }
 
         void LoadBinding()
         {
-            foreach (Control control in panelInfo.Controls)
-            {
-                if (!(control is Label) && !(control is SimpleButton)) control.DataBindings.Clear();
-            }
-
             nmID.DataBindings.Add("Value", dtgvData.DataSource, "ID", false, DataSourceUpdateMode.Never);
             txbHousehold.DataBindings.Add("Text", dtgvData.DataSource, "Owner", false, DataSourceUpdateMode.Never);
             txbDonate.DataBindings.Add("Text", dtgvData.DataSource, "Name", false, DataSourceUpdateMode.Never);
@@ -144,7 +136,7 @@ namespace HouseholdManager.GUI
 
         void LoadEvent()
         {
-            btnShow.Click += delegate { LoadData(); };
+            btnShow.Click += delegate { donateInfoBindingSource.DataSource = ListDonateInfo2; };
 
             btnSearch.Click += delegate { SearchDonateInfo(txbSearch.Text); };
 
@@ -196,19 +188,7 @@ namespace HouseholdManager.GUI
             nmTotalValue.Value = (decimal)list.Sum(info => info.Value);
         }
 
-        void SearchDonateInfo(string input)
-        {
-            var list = new List<DonateInfo2>(ListDonateInfo2);
+        void SearchDonateInfo(string input) => donateInfoBindingSource.DataSource = Help.Search(ListDonateInfo2, input);
 
-            input = input.ToLower().ToUnsigned();
-
-            list.RemoveAll(info => info.Name.ToUnsigned().ToLower().Contains(input) == false
-                                && info.Owner.ToUnsigned().ToLower().Contains(input) == false
-                                && info.DateContribute.ToString("dd/MM/yyyy").ToUnsigned().ToLower().Contains(input) == false);
-
-            dtgvData.DataSource = list;
-
-            LoadBinding();
-        }
     }
 }

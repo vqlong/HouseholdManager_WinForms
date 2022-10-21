@@ -17,16 +17,18 @@ namespace HouseholdManager.GUI
 
             Initialize();
 
-            LoadData();
+            LoadBinding();
 
             LoadEvent();
         }
+
+        #region Property
 
         BindingSource feeInfoBindingSource = new BindingSource();
 
         public SimpleButton AcceptButton { get; private set; }
 
-        List<FeeInfo2> _listFeeInfo2;     
+        List<FeeInfo2> _listFeeInfo2;
         public List<FeeInfo2> ListFeeInfo2
         {
             get => _listFeeInfo2;
@@ -111,40 +113,31 @@ namespace HouseholdManager.GUI
                     },
                     _textColor);
             }
-        }
+        } 
+
+        #endregion
 
         void Initialize()
         {
+            dtgvData.DataSource = feeInfoBindingSource;
+
             AcceptButton = btnSearch;
-        }
-
-        void LoadData()
-        {
-            dtgvData.DataSource = feeInfoBindingSource;        
-
-            LoadBinding();
         }
 
         void LoadBinding()
         {
-            foreach (Control control in panelInfo.Controls)
-            {
-                if (!(control is Label) && !(control is SimpleButton)) control.DataBindings.Clear();
-            }
-
             nmID.DataBindings.Add("Value", dtgvData.DataSource, "ID", false, DataSourceUpdateMode.Never);
             txbHousehold.DataBindings.Add("Text", dtgvData.DataSource, "Owner", false, DataSourceUpdateMode.Never);
             txbFee.DataBindings.Add("Text", dtgvData.DataSource, "Name", false, DataSourceUpdateMode.Never);
             dtDate.DataBindings.Add("EditValue", dtgvData.DataSource, "DatePay", false, DataSourceUpdateMode.Never);
             nmValue.DataBindings.Add("Value", dtgvData.DataSource, "Value", false, DataSourceUpdateMode.Never);
-
         }
 
         void LoadEvent()
         {
-            btnShow.Click += delegate { LoadData(); };
+            btnShow.Click += delegate { feeInfoBindingSource.DataSource = ListFeeInfo2; };
 
-            btnSearch.Click += delegate { SearchDonateInfo(txbSearch.Text); };
+            btnSearch.Click += delegate { SearchFeeInfo(txbSearch.Text); };
 
             //Click vào cell ID để chọn toàn bộ GridView
             dtgvData.CellMouseClick += (s, e) => { if (e.ColumnIndex == 0 && e.RowIndex == -1) dtgvData.SelectAll(); };
@@ -194,19 +187,6 @@ namespace HouseholdManager.GUI
             nmTotalValue.Value = (decimal)list.Sum(info => info.Value);
         }
 
-        void SearchDonateInfo(string input)
-        {
-            var list = new List<FeeInfo2>(ListFeeInfo2);
-
-            input = input.ToLower().ToUnsigned();
-
-            list.RemoveAll(info => info.Name.ToUnsigned().ToLower().Contains(input) == false
-                                && info.Owner.ToUnsigned().ToLower().Contains(input) == false
-                                && info.DatePay.ToString("dd/MM/yyyy").ToUnsigned().ToLower().Contains(input) == false);
-
-            dtgvData.DataSource = list;
-
-            LoadBinding();
-        }
+        void SearchFeeInfo(string input) => feeInfoBindingSource.DataSource = Help.Search(ListFeeInfo2, input);
     }
 }
