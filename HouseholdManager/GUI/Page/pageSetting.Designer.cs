@@ -63,6 +63,8 @@
             // 
             // gpFont
             // 
+            this.gpFont.AppearanceCaption.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.gpFont.AppearanceCaption.Options.UseFont = true;
             this.gpFont.CaptionImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("gpFont.CaptionImageOptions.Image")));
             this.gpFont.Controls.Add(this.btnLabelFont);
             this.gpFont.Controls.Add(this.txbLabelFont);
@@ -80,7 +82,7 @@
             this.gpFont.Name = "gpFont";
             this.gpFont.Size = new System.Drawing.Size(504, 192);
             this.gpFont.TabIndex = 1;
-            this.gpFont.Text = "Chọn Font hiển thị cho các thành phần";
+            this.gpFont.Text = "Chọn Font";
             // 
             // btnLabelFont
             // 
@@ -214,7 +216,7 @@
             this.gpColor.Name = "gpColor";
             this.gpColor.Size = new System.Drawing.Size(504, 127);
             this.gpColor.TabIndex = 2;
-            this.gpColor.Text = "Chọn màu sắc cho tên các thành phần";
+            this.gpColor.Text = "Chọn màu sắc";
             // 
             // btnTextColor
             // 
