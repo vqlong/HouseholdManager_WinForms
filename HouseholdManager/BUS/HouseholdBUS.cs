@@ -19,10 +19,10 @@ namespace HouseholdManager.BUS
         public static HouseholdBUS Instance => instance;
 
         public List<Household> GetListHousehold()
-        {
-            List<Household> listHousehold = new List<Household>();
-
+        {           
             DataTable data = HouseholdDAO.Instance.GetListHousehold();
+
+            List<Household> listHousehold = new List<Household>(data.Rows.Count);
 
             foreach (DataRow row in data.Rows)
             {

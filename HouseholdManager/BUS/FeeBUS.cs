@@ -20,9 +20,10 @@ namespace HouseholdManager.BUS
 
         public List<Fee> GetListFee()
         {
-            List<Fee> listFee = new List<Fee>();
-
+            
             DataTable data = FeeDAO.Instance.GetListFee();
+
+            List<Fee> listFee = new List<Fee>(data.Rows.Count);
 
             foreach (DataRow row in data.Rows)
             {

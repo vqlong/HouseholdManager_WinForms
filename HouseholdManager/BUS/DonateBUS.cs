@@ -20,9 +20,9 @@ namespace HouseholdManager.BUS
 
         public List<Donate> GetListDonate()
         {
-            List<Donate> listDonate = new List<Donate>();
-
             DataTable data = DonateDAO.Instance.GetListDonate();
+
+            List<Donate> listDonate = new List<Donate>(data.Rows.Count);
 
             foreach (DataRow row in data.Rows)
             {

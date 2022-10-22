@@ -279,6 +279,10 @@ namespace HouseholdManager.GUI
         //    nmTotalHousehold.Value = list.Count();
         //}
 
+        /// <summary>
+        /// Tính tổng số tiền.
+        /// </summary>
+        /// <param name="list"></param>
         void StatisticDonateInfo(List<DonateInfo2> list) => nmTotalDonate.Value = (decimal)list.Sum(info => info.Value);
 
         void StatisticFeeInfo(List<FeeInfo2> list) => nmTotalFee.Value = (decimal)list.Sum(info => info.Value);

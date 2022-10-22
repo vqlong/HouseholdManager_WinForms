@@ -21,10 +21,11 @@ namespace HouseholdManager.BUS
         public static PersonBUS Instance => instance;
 
         public List<Person> GetListPerson(string columnOrder = "ID")
-        {
-            List<Person> listPerson = new List<Person>();
-
+        {          
             DataTable data = PersonDAO.Instance.GetListPerson(columnOrder);
+
+            //Đặt trước capacity cho List
+            List<Person> listPerson = new List<Person>(data.Rows.Count);
 
             foreach (DataRow row in data.Rows)
             {
