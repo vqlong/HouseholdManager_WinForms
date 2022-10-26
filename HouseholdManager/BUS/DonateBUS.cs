@@ -1,11 +1,7 @@
 ﻿using HouseholdManager.DAO;
-using HouseholdManager.DTO;
+using Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HouseholdManager.BUS
@@ -18,39 +14,33 @@ namespace HouseholdManager.BUS
 
         public static DonateBUS Instance => instance;
 
-        public List<Donate> GetListDonate()
-        {
-            DataTable data = DonateDAO.Instance.GetListDonate();
+        public List<Donate> GetListDonate() => DonateDAO.Instance.GetListDonate();
 
-            List<Donate> listDonate = new List<Donate>(data.Rows.Count);
-
-            foreach (DataRow row in data.Rows)
-            {
-                listDonate.Add(new Donate(row));
-            }
-
-            return listDonate;
-        }
-
-        public Donate GetDonateByID(int id)
-        {
-            DataTable data = DonateDAO.Instance.GetDonateByID(id);
-
-            if(data.Rows.Count > 0) return new Donate(data.Rows[0]);
-
-            return null;
-        }
+        public Donate GetDonateByID(int id) => DonateDAO.Instance.GetDonateByID(id);
 
         public bool DeleteDonate(int id)
         {
-            return DonateDAO.Instance.DeleteDonate(id);
+            var result = false;
+
+            try
+            {
+                result = DonateDAO.Instance.DeleteDonate(id);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+
+            return result;
         }
 
         public bool UpdateDonate(int id, string name, string dateArise, double minValue)
         {
-            if (!name.IsVietnamese())
+            if (!name.IsVietnamese(50))
             {
-                MessageBox.Show("Tên khoản đóng góp chỉ được sử dụng ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Tên khoản đóng góp chỉ được sử dụng tối đa 50 ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return false;
             }
@@ -62,14 +52,14 @@ namespace HouseholdManager.BUS
                 return false;
             }
 
-            return DonateDAO.Instance.UpdateDonate(id, name, dateArise.ToDate(), minValue);
+            return DonateDAO.Instance.UpdateDonate(id, name, dateArise, minValue);
         }
 
         public Donate InsertDonate(string name, string dateArise, double minValue)
         {
-            if (!name.IsVietnamese())
+            if (!name.IsVietnamese(50))
             {
-                MessageBox.Show("Tên khoản đóng góp chỉ được sử dụng ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Tên khoản đóng góp chỉ được sử dụng tối đa 50 ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return null;
             }
@@ -81,11 +71,7 @@ namespace HouseholdManager.BUS
                 return null;
             }
 
-            var data = DonateDAO.Instance.InsertDonate(name, dateArise.ToDate(), minValue);
-
-            if (data.Rows.Count > 0) return new Donate(data.Rows[0]);
-
-            return null;
+            return DonateDAO.Instance.InsertDonate(name, dateArise, minValue);
         }
 
         public DonateInfo InsertDonateInfo(int householdID, int donateID, string dateContribute, double value)
@@ -97,27 +83,11 @@ namespace HouseholdManager.BUS
 
                 return null;
             }
-
-            var data = DonateDAO.Instance.InsertDonateInfo(householdID, donateID, dateContribute.ToDate(), value);
-
-            if (data.Rows.Count > 0) return new DonateInfo(data.Rows[0]);
-
-            return null;
+            
+            return DonateDAO.Instance.InsertDonateInfo(householdID, donateID, dateContribute, value);
         }
 
-        public List<DonateInfo2> GetListDonateInfo()
-        {
-            List<DonateInfo2> list = new List<DonateInfo2>();
-
-            DataTable data = DonateDAO.Instance.GetListDonateInfo();
-
-            foreach (DataRow row in data.Rows)
-            {
-                list.Add(new DonateInfo2(row));
-            }
-
-            return list;
-        }
+        public List<DonateInfo2> GetListDonateInfo2() => DonateDAO.Instance.GetListDonateInfo2();
 
     }
 }

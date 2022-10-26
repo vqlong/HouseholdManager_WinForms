@@ -1,5 +1,6 @@
 ﻿using HouseholdManager.BUS;
-using HouseholdManager.DTO;
+using Interfaces;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -229,10 +230,12 @@ namespace HouseholdManager.GUI
             ListPerson = PersonBUS.Instance.GetListPerson();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListPerson"));
             nmTotalPages.Value = Help.GetTotalPages(ListPerson);
+
+            //dtgvPerson chỉ hiện từng trang
             personBindingSource.DataSource = Help.GetPage(ListPerson);
 
             //Chỉnh tên cột, căn giữa...
-            FormatPerson();
+            if (personBindingSource.DataSource != null) FormatPerson();
 
             dtgvPerson.Text = "Bảng nhân khẩu";
             listPrivilege = new List<Control>
@@ -729,6 +732,10 @@ namespace HouseholdManager.GUI
             dtgvHousehold.Columns[2].HeaderText = "Địa chỉ";
             dtgvHousehold.Columns[3].HeaderText = "Số thành viên";
 
+            dtgvHousehold.Columns[4].Visible = false;
+            dtgvHousehold.Columns[5].Visible = false;
+            dtgvHousehold.Columns[6].Visible = false;
+
             dtgvHousehold.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dtgvHousehold.Columns[0].Width = 40;
 
@@ -751,6 +758,8 @@ namespace HouseholdManager.GUI
             dtgvPerson.Columns[5].HeaderText = "Quê quán";
             dtgvPerson.Columns[6].HeaderText = "ID Hộ";
             dtgvPerson.Columns[7].HeaderText = "Quan hệ";
+
+            dtgvPerson.Columns[8].Visible = false;
 
             dtgvPerson.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dtgvPerson.Columns[0].Width = 40;

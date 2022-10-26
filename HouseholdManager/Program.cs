@@ -1,9 +1,9 @@
 ﻿using HouseholdManager.GUI;
+using Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using Unity;
 
 namespace HouseholdManager
 {
@@ -15,6 +15,9 @@ namespace HouseholdManager
         [STAThread]
         static void Main()
         {
+            Config.RegisterEF();
+            //Config.RegisterSQLite();
+            
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += (s, e) => MessageBox.Show((e.ExceptionObject as Exception).Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Application.ThreadException += (s, e) => MessageBox.Show(e.Exception.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -22,6 +25,31 @@ namespace HouseholdManager
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new fLogin());
+        }
+    }
+
+    class Config
+    {
+        public static UnityContainer Container { get; } = new UnityContainer();
+
+        public static void RegisterEF()
+        {
+            Container.RegisterInstance<IAccountDAO>(Activator.CreateInstance(typeof(EntityDataAccess.AccountDAO), true) as EntityDataAccess.AccountDAO, InstanceLifetime.Singleton);
+            Container.RegisterInstance<IDonateDAO>(Activator.CreateInstance(typeof(EntityDataAccess.DonateDAO), true) as EntityDataAccess.DonateDAO, InstanceLifetime.Singleton);
+            Container.RegisterInstance<IFeeDAO>(Activator.CreateInstance(typeof(EntityDataAccess.FeeDAO), true) as EntityDataAccess.FeeDAO, InstanceLifetime.Singleton);
+            Container.RegisterInstance<IHouseholdDAO>(Activator.CreateInstance(typeof(EntityDataAccess.HouseholdDAO), true) as EntityDataAccess.HouseholdDAO, InstanceLifetime.Singleton);
+            Container.RegisterInstance<IPersonDAO>(Activator.CreateInstance(typeof(EntityDataAccess.PersonDAO), true) as EntityDataAccess.PersonDAO, InstanceLifetime.Singleton);
+            
+        }
+
+        public static void RegisterSQLite()
+        {
+            Container.RegisterFactory<IAccountDAO>(uc => Activator.CreateInstance(typeof(HouseholdManager.DAO.AccountDAO), true) as HouseholdManager.DAO.AccountDAO, FactoryLifetime.Singleton);
+            Container.RegisterFactory<IDonateDAO>(uc => Activator.CreateInstance(typeof(HouseholdManager.DAO.DonateDAO), true) as HouseholdManager.DAO.DonateDAO, FactoryLifetime.Singleton);
+            Container.RegisterFactory<IFeeDAO>(uc => Activator.CreateInstance(typeof(HouseholdManager.DAO.FeeDAO), true) as HouseholdManager.DAO.FeeDAO, FactoryLifetime.Singleton);
+            Container.RegisterFactory<IHouseholdDAO>(uc => Activator.CreateInstance(typeof(HouseholdManager.DAO.HouseholdDAO), true) as HouseholdManager.DAO.HouseholdDAO, FactoryLifetime.Singleton);
+            Container.RegisterFactory<IPersonDAO>(uc => Activator.CreateInstance(typeof(HouseholdManager.DAO.PersonDAO), true) as HouseholdManager.DAO.PersonDAO, FactoryLifetime.Singleton);
+
         }
     }
 }

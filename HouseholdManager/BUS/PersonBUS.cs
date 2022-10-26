@@ -1,13 +1,9 @@
 ﻿using DevExpress.XtraEditors;
 using DevExpress.XtraWaitForm;
 using HouseholdManager.DAO;
-using HouseholdManager.DTO;
+using Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HouseholdManager.BUS
@@ -20,48 +16,21 @@ namespace HouseholdManager.BUS
 
         public static PersonBUS Instance => instance;
 
-        public List<Person> GetListPerson(string columnOrder = "ID")
-        {          
-            DataTable data = PersonDAO.Instance.GetListPerson(columnOrder);
-
-            //Đặt trước capacity cho List
-            List<Person> listPerson = new List<Person>(data.Rows.Count);
-
-            foreach (DataRow row in data.Rows)
-            {
-                listPerson.Add(new Person(row));
-            }
-
-            return listPerson;
-        }
+        public List<Person> GetListPerson(string columnOrder = "ID") => PersonDAO.Instance.GetListPerson(columnOrder);
 
         /// <summary>
         /// Lấy nhân khẩu mới được tạo gần nhất.
         /// </summary>
         /// <returns></returns>
-        public Person GetNewPerson()
-        {
-            DataTable data = PersonDAO.Instance.GetNewPerson();
+        public Person GetNewPerson() => PersonDAO.Instance.GetNewPerson();
 
-            if (data.Rows.Count > 0) return new Person(data.Rows[0]);
-
-            return null;
-        }
-
-        public Person GetPersonByID(int id)
-        {
-            DataTable data = PersonDAO.Instance.GetPersonByID(id);
-
-            if (data.Rows.Count > 0) return new Person(data.Rows[0]);
-
-            return null;
-        }
+        public Person GetPersonByID(int id) => PersonDAO.Instance.GetPersonByID(id);
 
         public Person InsertPerson(string name, int gender, string dateOfBirth, string cmnd, string address, int householdID, int relation)
         {
-            if (!name.IsVietnamese() || !address.IsVietnamese()) 
+            if (!name.IsVietnamese(50) || !address.IsVietnamese(50)) 
             {
-                MessageBox.Show("Họ tên và quê quán chỉ được sử dụng ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Họ tên và quê quán chỉ được sử dụng tối đa 50 ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return null;
             }
@@ -80,23 +49,45 @@ namespace HouseholdManager.BUS
                 return null;
             }
 
-            var data = PersonDAO.Instance.InsertPerson(name, gender, dateOfBirth.ToDate(), cmnd, address, householdID, relation);
+            Person person;
 
-            if (data.Rows.Count > 0) return new Person(data.Rows[0]);
+            try
+            {
+                person = PersonDAO.Instance.InsertPerson(name, gender, dateOfBirth, cmnd, address, householdID, relation);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-            return null;
+                return null;
+            }
+
+            return person;
         }
 
         public bool DeletePerson(int id)
         {
-            return PersonDAO.Instance.DeletePerson(id);
+            var result = false;
+
+            try
+            {
+                result = PersonDAO.Instance.DeletePerson(id);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+
+            return result;
         }
 
         public bool UpdatePerson(int id, string name, int gender, string dateOfBirth, string cmnd, string address, int householdID, int relation)
         {
-            if (!name.IsVietnamese() || !address.IsVietnamese())
+            if (!name.IsVietnamese(50) || !address.IsVietnamese(50))
             {
-                MessageBox.Show("Họ tên và quê quán chỉ được sử dụng ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Họ tên và quê quán chỉ được sử dụng tối đa 50 ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return false;
             }
@@ -115,8 +106,20 @@ namespace HouseholdManager.BUS
                 return false;
             }
 
-            return PersonDAO.Instance.UpdatePerson(id, name, gender, dateOfBirth.ToDate(), cmnd, address, householdID, relation);
+            var result = false;
 
+            try
+            {
+                result = PersonDAO.Instance.UpdatePerson(id, name, gender, dateOfBirth, cmnd, address, householdID, relation);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+
+            return result;
         }
 
         public bool LoadFileExcel(string fileName, ProgressBarControl bar, ProgressPanel panel)
@@ -133,8 +136,8 @@ namespace HouseholdManager.BUS
             //tính số hàng cần lấy trong file excel
             int rowCount = range.Rows.Count;
 
-            string query = "";
-
+            //string query = "";
+            var listInput = new List<(string Name, int Gender, DateTime DateOfBirth, string Cmnd, string Address)>(rowCount);
             try
             {
                 for (int i = 1; i <= rowCount; i++)
@@ -144,13 +147,14 @@ namespace HouseholdManager.BUS
                         string name = worksheet.Cells[i, 3].Value2;
                         name = name.ToSingleSpace();
                         name = name.IsVietnamese() ? name : throw new Exception($"Họ tên không phù hợp Cells[{i}, 3].");
-                        name = name.Replace("'", "''");
+                        //SQLite cần chèn thêm ', SQL Server không cần
+                        //name = name.Replace("'", "''");
 
                         string genderStr = worksheet.Cells[i, 4].Value2;
                         int genderInt = genderStr.ToGender() ?? throw new Exception($"Giới tính không phù hợp Cells[{i}, 4].");
 
                         DateTime date = DateTime.FromOADate(worksheet.Cells[i, 5].Value2);
-                        string dateOfBirth = date.ToString("dd/MM/yyyy").IsDate() ? date.ToString("dd/MM/yyyy").ToDate() : throw new Exception($"Ngày sinh không phù hợp Cells[{i}, 5].");
+                        if (date.ToString("dd/MM/yyyy").IsDate() == false) throw new Exception($"Ngày sinh không phù hợp Cells[{i}, 5].");
 
                         string cmnd = Convert.ToString(worksheet.Cells[i, 6].Value2);
                         cmnd = cmnd.ToSingleSpace();
@@ -159,10 +163,10 @@ namespace HouseholdManager.BUS
                         string address = worksheet.Cells[i, 7].Value2;
                         address = address.ToSingleSpace();
                         address = address.IsVietnamese()? address : throw new Exception($"Địa chỉ không phù hợp Cells[{i}, 7].");
-                        address = address.Replace("'", "''");
+                        //address = address.Replace("'", "''");
 
-                        query += $"INSERT INTO [Person] ( [Name], [Gender], [DateOfBirth], [CMND], [Address]) VALUES ( '{name}', {genderInt}, '{dateOfBirth}', '{cmnd}', '{address}');\n";
-
+                        //query += $"INSERT INTO [Person] ( [Name], [Gender], [DateOfBirth], [CMND], [Address]) VALUES ( '{name}', {genderInt}, '{dateOfBirth}', '{cmnd}', '{address}');\n";
+                        listInput.Add((name, genderInt, date, cmnd, address));
                     }
                     //Cập nhật thanh progress trên form
                     bar.Position = i * 100 / rowCount;
@@ -186,9 +190,8 @@ namespace HouseholdManager.BUS
             panel.WaitAnimationType = DevExpress.Utils.Animation.WaitingAnimatorType.Bar;
             panel.ShowDescription = true;
 
-            if (DataProvider.Instance.ExecuteNonQuery(query) > 0) return true;
 
-            return false;
+            return PersonDAO.Instance.LoadFileExcel(listInput);
         }
 
         public bool CreateFileExcel(string fileName, List<Person> list, ProgressBarControl bar)

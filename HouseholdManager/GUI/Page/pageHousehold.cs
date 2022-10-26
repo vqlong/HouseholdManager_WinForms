@@ -1,6 +1,6 @@
-﻿using DevExpress.XtraEditors;
-using HouseholdManager.BUS;
-using HouseholdManager.DTO;
+﻿using HouseholdManager.BUS;
+using Interfaces;
+using Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -54,16 +54,16 @@ namespace HouseholdManager.GUI
         /// <summary>
         /// 1 List&lt;Person&gt; dùng để binding với ListPerson của pPerson.
         /// </summary>
-        public List<Person> ListPerson
-        {
-            get => _listPerson;
-            set
-            {
-                _listPerson = value;
+        public List<Person> ListPerson { get; set; }
+        //{
+        //    get => _listPerson;
+        //    set
+        //    {
+        //        _listPerson = value;
 
-                personBindingSource.DataSource = _listPerson;
-            }
-        }
+        //        personBindingSource.DataSource = _listPerson;
+        //    }
+        //}
 
         List<Household> _listHousehold;
         /// <summary>
@@ -188,9 +188,12 @@ namespace HouseholdManager.GUI
         }
 
         #endregion
+
+        #region Method
+       
         public void ChangeDisplayMode(DisplayMode mode)
         {
-            if(mode == DisplayMode.Normal)
+            if (mode == DisplayMode.Normal)
             {
                 panelSelect.Visible = false;
 
@@ -233,6 +236,10 @@ namespace HouseholdManager.GUI
             dtgvData.DataSource = householdBindingSource;
             dtgvPerson.DataSource = personBindingSource;
 
+            //Để dtgvPerson có thể hiện các cột khi chưa có data
+            personBindingSource.DataSource = typeof(Person);
+            FormatPerson();
+
             ListHousehold = HouseholdBUS.Instance.GetListHousehold();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
 
@@ -263,14 +270,13 @@ namespace HouseholdManager.GUI
                 var household = (Household)(e as InsertedEventArgs).Inserted;
                 //Thêm vào householdBindingSource để hiển thị lên dtgvData hiện tại (có thể đang hiện kết quả search)
                 householdBindingSource.Add(household);
-                //Thêm vào ListHousehold
-                ListHousehold.Add(household);
+                //Thêm vào ListHousehold (Nếu dtgvData đang hiện kết quả search householdBindingSource.DataSource != ListHousehold)
+                if (!householdBindingSource.DataSource.Equals(ListHousehold)) ListHousehold.Add(household);
 
                 //Bôi đen hàng vừa thêm vào
                 dtgvData.CurrentCell = dtgvData.Rows[dtgvData.RowCount - 1].Cells[1];
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
-                ////LoadData(); 
             };
 
             btnShow.Click += delegate { ListHousehold = HouseholdBUS.Instance.GetListHousehold(); };
@@ -299,7 +305,7 @@ namespace HouseholdManager.GUI
             btnCancel.Click += delegate { (Parent.Parent as Form).Close(); };
 
             //Hiện các thành viên khi có hộ khẩu được chọn trên dtgvData
-            dtgvData.CurrentCellChanged += delegate 
+            dtgvData.CurrentCellChanged += delegate
             {
                 //Khi chưa click vào tabHousehold => chưa xảy ra binding => ListPerson chưa nhận giá trị
                 if (ListPerson == null) return;
@@ -308,24 +314,26 @@ namespace HouseholdManager.GUI
 
                 personBindingSource.DataSource = list;
 
-                dtgvPerson.Columns[3].DefaultCellStyle.Format = "dd/MM/yyyy";
+                //dtgvPerson.Columns[3].DefaultCellStyle.Format = "dd/MM/yyyy";
 
-                dtgvPerson.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-                dtgvPerson.Columns[6].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                //dtgvPerson.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                //dtgvPerson.Columns[6].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
-                dtgvPerson.Columns[0].HeaderText = "ID";
-                dtgvPerson.Columns[1].HeaderText = "Họ tên";
-                dtgvPerson.Columns[2].HeaderText = "Giới tính";
-                dtgvPerson.Columns[3].HeaderText = "Ngày sinh";
-                dtgvPerson.Columns[4].HeaderText = "CMND";
-                dtgvPerson.Columns[5].HeaderText = "Quê quán";
-                dtgvPerson.Columns[6].HeaderText = "ID Hộ";
-                dtgvPerson.Columns[7].HeaderText = "Quan hệ";
+                //dtgvPerson.Columns[0].HeaderText = "ID";
+                //dtgvPerson.Columns[1].HeaderText = "Họ tên";
+                //dtgvPerson.Columns[2].HeaderText = "Giới tính";
+                //dtgvPerson.Columns[3].HeaderText = "Ngày sinh";
+                //dtgvPerson.Columns[4].HeaderText = "CMND";
+                //dtgvPerson.Columns[5].HeaderText = "Quê quán";
+                //dtgvPerson.Columns[6].HeaderText = "ID Hộ";
+                //dtgvPerson.Columns[7].HeaderText = "Quan hệ";
 
-                dtgvPerson.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                dtgvPerson.Columns[0].Width = 40;
-                dtgvPerson.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                dtgvPerson.Columns[6].Width = 80;
+                //dtgvPerson.Columns[8].Visible = false;
+
+                //dtgvPerson.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                //dtgvPerson.Columns[0].Width = 40;
+                //dtgvPerson.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                //dtgvPerson.Columns[6].Width = 80;
             };
         }
 
@@ -344,17 +352,17 @@ namespace HouseholdManager.GUI
             {
                 MessageBox.Show("Xoá hộ khẩu thành công.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                //Xoá trên GridView và notify thay đổi
-                ListHousehold.RemoveAll(household => household.ID == id);
-
+                //Xoá trên GridView và notify thay đổi               
                 householdBindingSource.RemoveCurrent();
-                householdBindingSource.ResetBindings(false);
+                //householdBindingSource.ResetBindings(false);
+                if (!householdBindingSource.DataSource.Equals(ListHousehold))
+                {
+                    ListHousehold.RemoveAll(household => household.ID == id);
+                }                   
 
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListHousehold"));
 
                 //Xoá hộ khẩu sẽ không tự cập nhật lại thông tin trên DonateInfo và FeeInfo
-
-                ////LoadData();
 
                 return;
             }
@@ -412,11 +420,39 @@ namespace HouseholdManager.GUI
             dtgvData.Columns[2].HeaderText = "Địa chỉ";
             dtgvData.Columns[3].HeaderText = "Số thành viên";
 
+            dtgvData.Columns[4].Visible = false;
+            dtgvData.Columns[5].Visible = false;
+            dtgvData.Columns[6].Visible = false;
+
             dtgvData.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dtgvData.Columns[0].Width = 40;
+        } 
+
+        void FormatPerson()
+        {
+            dtgvPerson.Columns[3].DefaultCellStyle.Format = "dd/MM/yyyy";
+
+            dtgvPerson.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dtgvPerson.Columns[6].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            dtgvPerson.Columns[0].HeaderText = "ID";
+            dtgvPerson.Columns[1].HeaderText = "Họ tên";
+            dtgvPerson.Columns[2].HeaderText = "Giới tính";
+            dtgvPerson.Columns[3].HeaderText = "Ngày sinh";
+            dtgvPerson.Columns[4].HeaderText = "CMND";
+            dtgvPerson.Columns[5].HeaderText = "Quê quán";
+            dtgvPerson.Columns[6].HeaderText = "ID Hộ";
+            dtgvPerson.Columns[7].HeaderText = "Quan hệ";
+
+            dtgvPerson.Columns[8].Visible = false;
+
+            dtgvPerson.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dtgvPerson.Columns[0].Width = 40;
+            dtgvPerson.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dtgvPerson.Columns[6].Width = 80;
         }
 
-
+        #endregion
     }
 
     

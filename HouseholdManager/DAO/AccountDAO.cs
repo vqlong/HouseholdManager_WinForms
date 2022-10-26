@@ -1,19 +1,23 @@
-﻿using System;
+﻿using Interfaces;
+using Models;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Security.Cryptography;
 using System.Text;
+using Unity;
 
 namespace HouseholdManager.DAO
 {
-    public class AccountDAO
+    public class AccountDAO : IAccountDAO
     {
         private AccountDAO() { }
 
-        private static readonly AccountDAO instance = new AccountDAO();
+        private static readonly IAccountDAO instance = Config.Container.Resolve<IAccountDAO>();
 
-        public static AccountDAO Instance => instance;
+        public static IAccountDAO Instance => instance;
 
-        public DataTable Login(string username, string password)
+        public Account Login(string username, string password)
         {
 
             if (!string.IsNullOrEmpty(password))
@@ -32,50 +36,69 @@ namespace HouseholdManager.DAO
 
             var query = "SELECT Username, DisplayName, Type, Note, Setting FROM Account WHERE Username = @username AND Password = @password";
 
-            return DataProvider.Instance.ExecuteQuery(query, new object[] {username, password});
+            var data = DataProvider.Instance.ExecuteQuery(query, new object[] { username, password });
+
+            if (data.Rows.Count == 1) return new Account(data.Rows[0]);
+
+            return null;
         }
 
-        public DataTable GetListAccount()
+        public List<Account> GetListAccount()
         {
             string query = "SELECT [Username], [DisplayName], [Type], [Setting] FROM [Account];";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            List<Account> listAccount = new List<Account>();
+
+            foreach (DataRow row in data.Rows)
+            {
+                listAccount.Add(new Account(row));
+            }
+
+            return listAccount;
         }
 
-        public DataTable GetListUser()
+        public List<string> GetListUser()
         {
             var query = "SELECT Username FROM Account";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            var data = DataProvider.Instance.ExecuteQuery(query);
+
+            var listUser = new List<string>();
+
+            foreach (DataRow row in data.Rows)
+            {
+                listUser.Add(row[0].ToString());
+            }
+
+            return listUser;
         }
 
-        public DataTable InsertAccount(string username)
+        public Account InsertAccount(string username)
         {
-            string query = $"SELECT count(*) FROM [Account] WHERE [Username] = '{username}';";
+            string query = $"SELECT count(*) FROM [Account] WHERE [Username] = @username ;";
 
             //Kiểm tra xem đã có username này trong database chưa
-            var result = Convert.ToInt32(DataProvider.Instance.ExecuteScalar(query));
+            var result = Convert.ToInt32(DataProvider.Instance.ExecuteScalar(query, new object[] { username }));
 
-            var data = new DataTable();
-
-            //Nếu đã có thì return 1 DataTable rỗng
-            if (result > 0) return data;
+            //Nếu đã có thì return null
+            if (result > 0) return null;
 
             query = "INSERT INTO [Account] ([Username]) VALUES ( @username );";
 
             result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { username });
 
-            if (result == 1)
-                data = Login(username, "0");
+            if (result == 1) return Login(username, "0");
 
-            return data;
+            return null;
         }
 
         public bool DeleteAccount(string username)
         {
-            string query = $"DELETE FROM [Account] WHERE [Username] = '{username}';";
+            string query = $"DELETE FROM [Account] WHERE [Username] = @username ;";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query);
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { username });
 
             if (result == 1) return true;
 
@@ -109,12 +132,12 @@ namespace HouseholdManager.DAO
             var result2 = 0;
             if (!string.IsNullOrEmpty(password))
             {
-                byte[] bytePassWord = ASCIIEncoding.ASCII.GetBytes(password);
+                byte[] bytePassword = ASCIIEncoding.ASCII.GetBytes(password);
 
-                byte[] sha256PassWord = SHA256.Create().ComputeHash(bytePassWord);
+                byte[] sha256Password = SHA256.Create().ComputeHash(bytePassword);
 
                 password = "";
-                foreach (var item in sha256PassWord)
+                foreach (var item in sha256Password)
                 {
                     password += Convert.ToString(item);
                 }

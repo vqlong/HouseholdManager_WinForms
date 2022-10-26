@@ -1,17 +1,12 @@
 ﻿using DevExpress.Skins.XtraForm;
 using DevExpress.XtraEditors;
 using HouseholdManager.BUS;
-using HouseholdManager.DTO;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Diagnostics.Tracing;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HouseholdManager.GUI

@@ -1,4 +1,4 @@
-﻿using HouseholdManager.DTO;
+﻿using Models;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;

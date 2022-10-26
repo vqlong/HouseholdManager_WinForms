@@ -1,5 +1,6 @@
 ﻿using DevExpress.Skins.XtraForm;
 using DevExpress.XtraEditors;
+using Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

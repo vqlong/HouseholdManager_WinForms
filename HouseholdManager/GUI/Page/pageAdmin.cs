@@ -1,6 +1,6 @@
 ﻿using DevExpress.XtraEditors;
 using HouseholdManager.BUS;
-using HouseholdManager.DTO;
+using Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

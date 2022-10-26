@@ -1,6 +1,6 @@
 ﻿using DevExpress.XtraEditors;
 using HouseholdManager.BUS;
-using HouseholdManager.DTO;
+using Models;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -169,11 +169,13 @@ namespace HouseholdManager.GUI
             dtgvData.Columns[2].HeaderText = "Ngày kêu gọi";
             dtgvData.Columns[3].HeaderText = "Số tiền thấp nhất";
 
+            dtgvData.Columns[4].Visible = false;
+
             dtgvData.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dtgvData.Columns[0].Width = 40;
 
             //Chỉ cần load 1 lần ở đây để binding cho bên pageDonateInfo là đủ
-            ListDonateInfo2 = DonateBUS.Instance.GetListDonateInfo();
+            ListDonateInfo2 = DonateBUS.Instance.GetListDonateInfo2();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListDonateInfo2"));
 
             AcceptButton = btnSearch;

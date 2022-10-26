@@ -1,32 +1,48 @@
-﻿using System;
+﻿using Interfaces;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity;
 
 namespace HouseholdManager.DAO
 {
-    public class HouseholdDAO
+    public class HouseholdDAO : IHouseholdDAO
     {
         private HouseholdDAO() { }
 
-        private static readonly HouseholdDAO instance = new HouseholdDAO();
+        private static readonly IHouseholdDAO instance = Config.Container.Resolve<IHouseholdDAO>();
 
-        public static HouseholdDAO Instance => instance;
+        public static IHouseholdDAO Instance => instance;
 
-        public DataTable GetListHousehold()
+        public List<Household> GetListHousehold()
         {
             string query = "SELECT * FROM Household ORDER BY ID ASC";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            List<Household> listHousehold = new List<Household>(data.Rows.Count);
+
+            foreach (DataRow row in data.Rows)
+            {
+                listHousehold.Add(new Household(row));
+            }
+
+            return listHousehold;
         }
 
-        public DataTable GetHouseholdByID(int id)
+        public Household GetHouseholdByID(int id)
         {
             string query = $@"SELECT * FROM [Household] WHERE [ID] = {id};";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            if (data.Rows.Count > 0) return new Household(data.Rows[0]);
+
+            return null;
         }
 
         public bool DeleteHousehold(int id)
@@ -54,7 +70,7 @@ namespace HouseholdManager.DAO
             return false;
         }
 
-        public DataTable InsertHousehold(string owner, string address)
+        public Household InsertHousehold(string owner, string address)
         {
             string query =
           $@"INSERT INTO [Household] (
@@ -68,12 +84,14 @@ namespace HouseholdManager.DAO
 
             var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { owner, address });
 
-            var data = new DataTable();
-
             if (result == 1)
-                data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [Household] WHERE [ID] = (SELECT max([ID]) FROM [Household]);");
+            {
+                var data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [Household] WHERE [ID] = (SELECT max([ID]) FROM [Household]);");
 
-            return data;
+                if (data.Rows.Count > 0) return new Household(data.Rows[0]);
+            }
+
+            return null;
         }
     }
 }

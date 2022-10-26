@@ -1,14 +1,10 @@
 ﻿using DevExpress.XtraEditors;
 using HouseholdManager.BUS;
-using HouseholdManager.DTO;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HouseholdManager.GUI
@@ -188,11 +184,13 @@ namespace HouseholdManager.GUI
             dtgvData.Columns[3].HeaderText = "Số tiền phải nộp";
             dtgvData.Columns[4].HeaderText = "Hệ số";
 
+            dtgvData.Columns[5].Visible = false;
+
             dtgvData.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dtgvData.Columns[0].Width = 40;
 
             //Chỉ cần load 1 lần ở đây để binding cho bên pageFeeInfo là đủ
-            ListFeeInfo2 = FeeBUS.Instance.GetListFeeInfo();
+            ListFeeInfo2 = FeeBUS.Instance.GetListFeeInfo2();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListFeeInfo2"));
 
             AcceptButton = btnSearch;

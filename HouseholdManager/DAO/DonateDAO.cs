@@ -1,32 +1,44 @@
-﻿using System;
+﻿using Interfaces;
+using Models;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Unity;
 
 namespace HouseholdManager.DAO
 {
-    public class DonateDAO
+    public class DonateDAO : IDonateDAO
     {
         private DonateDAO() { }
 
-        private static readonly DonateDAO instance = new DonateDAO();
+        private static readonly IDonateDAO instance = Config.Container.Resolve<IDonateDAO>();
 
-        public static DonateDAO Instance => instance;
+        public static IDonateDAO Instance => instance;
 
-        public DataTable GetListDonate()
+        public List<Donate> GetListDonate()
         {
             string query = "SELECT * FROM Donate ORDER BY ID ASC";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            List<Donate> listDonate = new List<Donate>(data.Rows.Count);
+
+            foreach (DataRow row in data.Rows)
+            {
+                listDonate.Add(new Donate(row));
+            }
+
+            return listDonate;
         }
 
-        public DataTable GetDonateByID(int id)
+        public Donate GetDonateByID(int id)
         {
             string query = $"SELECT * FROM [Donate] WHERE [ID] = {id};";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            if (data.Rows.Count > 0) return new Donate(data.Rows[0]);
+
+            return null;
         }
 
         public bool DeleteDonate(int id)
@@ -48,14 +60,14 @@ namespace HouseholdManager.DAO
                                      [MinValue] = @minValue       
                                WHERE [ID] = @id ";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, dateArise, minValue, id });
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, dateArise.ToDate(), minValue, id });
 
             if (result == 1) return true;
 
             return false;
         }
 
-        public DataTable InsertDonate(string name, string dateArise, double minValue)
+        public Donate InsertDonate(string name, string dateArise, double minValue)
         {
             string query =
           $@"INSERT INTO [Donate] (
@@ -69,17 +81,19 @@ namespace HouseholdManager.DAO
                          @minValue  
                      );";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, dateArise, minValue });
-
-            var data = new DataTable();
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, dateArise.ToDate(), minValue });
 
             if (result == 1)
-                data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [Donate] WHERE [ID] = (SELECT max([ID]) FROM [Donate]);");
+            {
+                var data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [Donate] WHERE [ID] = (SELECT max([ID]) FROM [Donate]);");
 
-            return data;
+                if (data.Rows.Count > 0) return new Donate(data.Rows[0]);
+            }
+
+            return null;
         }
 
-        public DataTable InsertDonateInfo(int householdID, int donateID, string dateContribute, double value)
+        public DonateInfo InsertDonateInfo(int householdID, int donateID, string dateContribute, double value)
         {
             string query =
           $@"INSERT INTO [DonateInfo] ( 
@@ -95,17 +109,19 @@ namespace HouseholdManager.DAO
                          @value 
                      );";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { householdID, donateID, dateContribute, value });
-
-            var data = new DataTable();
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { householdID, donateID, dateContribute.ToDate(), value });
 
             if (result == 1)
-                data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [DonateInfo] WHERE [ID] = (SELECT max([ID]) FROM [DonateInfo]);");
+            {
+                var data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [DonateInfo] WHERE [ID] = (SELECT max([ID]) FROM [DonateInfo]);");
 
-            return data;
+                if (data.Rows.Count > 0) return new DonateInfo(data.Rows[0]);
+            }
+
+            return null;
         }
 
-        public DataTable GetListDonateInfo()
+        public List<DonateInfo2> GetListDonateInfo2()
         {
             string query =
                 @"SELECT [DonateInfo].[ID],
@@ -121,7 +137,16 @@ namespace HouseholdManager.DAO
                     JOIN
                          [Donate] ON [DonateInfo].[DonateID] = [Donate].[ID];";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            List<DonateInfo2> list = new List<DonateInfo2>();
+
+            foreach (DataRow row in data.Rows)
+            {
+                list.Add(new DonateInfo2(row));
+            }
+
+            return list;
         }
     }
 }

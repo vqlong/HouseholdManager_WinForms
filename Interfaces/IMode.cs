@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-namespace HouseholdManager.GUI
+namespace Interfaces
 {
     /// <summary>
     /// Thực thi interface này để có thể chuyển đổi DisplayMode để lựa chọn hoặc hiển thị data chứa bên trong.

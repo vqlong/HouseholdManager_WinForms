@@ -1,47 +1,65 @@
-﻿using DevExpress.XtraEditors;
-using HouseholdManager.DTO;
+﻿using Interfaces;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Windows.Forms;
+using Unity;
 
 namespace HouseholdManager.DAO
 {
-    public class PersonDAO
+    public class PersonDAO : IPersonDAO
     {
         private PersonDAO() { }
 
-        private static readonly PersonDAO instance = new PersonDAO();
+        private static readonly IPersonDAO instance = Config.Container.Resolve<IPersonDAO>();
 
-        public static PersonDAO Instance => instance;
+        public static IPersonDAO Instance => instance;
 
-        public DataTable GetListPerson(string columnOrder = "ID")
-        {          
+        public List<Person> GetListPerson(string columnOrder = "ID")
+        {
             string query = $"SELECT * FROM Person ORDER BY [{columnOrder}] ASC";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            //Đặt trước capacity cho List
+            List<Person> listPerson = new List<Person>(data.Rows.Count);
+
+            foreach (DataRow row in data.Rows)
+            {
+                listPerson.Add(new Person(row));
+            }
+
+            return listPerson;
         }
 
-        public DataTable GetNewPerson()
+        public Person GetNewPerson()
         {
             string query = @"SELECT * FROM [Person] WHERE [ID] = (SELECT max([ID]) FROM [Person]);";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            if (data.Rows.Count > 0) return new Person(data.Rows[0]);
+
+            return null;
         }
 
-        public DataTable GetPersonByID(int id)
+        public Person GetPersonByID(int id)
         {
             string query = $@"SELECT * FROM [Person] WHERE [ID] = {id};";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            if (data.Rows.Count > 0) return new Person(data.Rows[0]);
+
+            return null;
         }
 
-        public DataTable InsertPerson(string name, int gender, string dateOfBirth, string cmnd, string address, int householdID, int relation)
+        public Person InsertPerson(string name, int gender, string dateOfBirth, string cmnd, string address, int householdID, int relation)
         {
-            string query = 
+            string query =
           $@"INSERT INTO [Person] (
                          [Name],
-                         [Gender],   
+                         [Gender],
                          [DateOfBirth],
                          [CMND],
                          [Address],
@@ -50,7 +68,7 @@ namespace HouseholdManager.DAO
                      )
                      VALUES ( 
                          @name, 
-                         @gender,                
+                         @gender,  
                          @dateOfBirth, 
                          @cmnd, 
                          @address, 
@@ -58,14 +76,11 @@ namespace HouseholdManager.DAO
                          @relation  
                      );";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] {name, gender, dateOfBirth, cmnd, address, householdID, relation});
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, gender, dateOfBirth.ToDate(), cmnd, address, householdID, relation });
 
-            var data = new DataTable();
+            if (result == 1) return GetNewPerson();
 
-            if (result == 1)
-                data = GetNewPerson();
-
-            return data;
+            return null;
         }
 
         public bool DeletePerson(int id)
@@ -91,9 +106,26 @@ namespace HouseholdManager.DAO
                                      [Relation] = @relation 
                                WHERE [ID] = @id ";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] {name, gender, dateOfBirth, cmnd, address, householdID, relation, id});
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, gender, dateOfBirth.ToDate(), cmnd, address, householdID, relation, id });
 
             if (result == 1) return true;
+
+            return false;
+        }
+
+        public bool LoadFileExcel(List<(string Name, int Gender, DateTime DateOfBirth, string Cmnd, string Address)> listInput)
+        {
+            string query = "";
+
+            foreach (var item in listInput)
+            {
+                query += $"INSERT INTO [Person] ( [Name], [Gender], [DateOfBirth], [CMND], [Address]) VALUES ( '{item.Name.Replace("'", "''")}', {item.Gender}, '{item.DateOfBirth.ToString("dd/MM/yyyy").ToDate()}', '{item.Cmnd}', '{item.Address.Replace("'", "''")}');\n";
+
+            }
+
+            var result = DataProvider.Instance.ExecuteNonQuery(query);
+
+            if (result > 0) return true;
 
             return false;
         }

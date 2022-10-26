@@ -1,5 +1,6 @@
-﻿using HouseholdManager.DTO;
-using HouseholdManager.GUI;
+﻿using HouseholdManager.GUI;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -40,6 +41,8 @@ namespace HouseholdManager
 
                 foreach (var property in properties)
                 {
+                    if ((property.PropertyType.IsGenericType || property.PropertyType.IsClass) && property.PropertyType != typeof(string)) continue;
+
                     if (property.GetValue(item).ToString().ToUnsigned().ToLower().Contains(input))
                     {
                         isContained = true;
@@ -65,7 +68,7 @@ namespace HouseholdManager
         /// <returns></returns>
         public static List<T> GetPage<T>(List<T> list, int pageNumber = 1, int pageSize = 40)
         {
-            if (list == null || pageSize == 0 || pageNumber <= 0) return null;
+            if (list == null || list.Count <= 0 || pageSize == 0 || pageNumber <= 0) return null;
 
             //Nếu chọn page cuối
             if (pageNumber == GetTotalPages(list, pageSize)) 
@@ -83,7 +86,7 @@ namespace HouseholdManager
         /// <returns></returns>
         public static int GetTotalPages<T>(List<T> list, int pageSize = 40)
         {
-            if (list == null || pageSize == 0) return 0;
+            if (list == null || list.Count <= 0 || pageSize == 0) return 0;
 
             int total = list.Count / pageSize;
 
@@ -273,6 +276,31 @@ namespace HouseholdManager
         }
 
         /// <summary>
+        /// Kiểm tra 1 string có phù hợp các tiêu chuẩn:
+        /// <br>1. Chỉ sử dụng ký tự Latin.</br>
+        /// <br>2. Giữa các từ chỉ có 1 dấu cách.</br>
+        /// <br>3. Trong 1 từ có nhiều nhất 1 dấu nháy đơn.</br>
+        /// <br>4. Chiều dài tối đa cho trước.</br>
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="maxLength"></param>
+        /// <returns></returns>
+        public static bool IsVietnamese(this string text, int maxLength)
+        {
+            if (string.IsNullOrEmpty(text)) return false;
+
+            string vnChar = @"aAàÀảẢãÃáÁạẠăĂằẰẳẲẵẴắẮặẶâÂầẦẩẨẫẪấẤậẬbBcCdDđĐeEèÈẻẺẽẼéÉẹẸêÊềỀểỂễỄếẾệỆfFgGhHiIìÌỉỈĩĨíÍịỊjJkKlLmMnNoOòÒỏỎõÕóÓọỌôÔồỒổỔỗỖốỐộỘơƠờỜởỞỡỠớỚợỢpPqQrRsStTuUùÙủỦũŨúÚụỤưƯừỪửỬữỮứỨựỰvVwWxXyYỳỲỷỶỹỸýÝỵỴzZ\d";
+
+            string pattern = $@"^(([{vnChar}]+)|([{vnChar}]+'?[{vnChar}]+))((\u0020[{vnChar}]+)|(\u0020[{vnChar}]+'?[{vnChar}]+))*$";
+
+            //RegexOptions.ECMAScript: \d => [0-9]
+            var match = Regex.Match(text, pattern, RegexOptions.ECMAScript);
+
+            return match.Value.Equals(text) && text.Length <= 50;
+
+        }
+
+        /// <summary>
         /// Kiểm tra 1 string có phải là 1 dãy các chữ số.
         /// </summary>
         /// <param name="textNumber"></param>
@@ -312,6 +340,21 @@ namespace HouseholdManager
 
             if (match != null && match.Value != "")
                 return match.Groups["Year"].ToString() + "-" + match.Groups["Month"].ToString() + "-" + match.Groups["Day"].ToString();
+
+            return null;
+        }
+
+        /// <summary>
+        /// Chuyển chuỗi ngày tháng dạng dd/MM/yyyy thành kiểu DateTime.
+        /// </summary>
+        /// <param name="textDate"></param>
+        /// <returns></returns>
+        public static DateTime? ToDateTime(this string textDate)
+        {
+            var match = Regex.Match(textDate, @"^(?<Day>\d{2})\/(?<Month>\d{2})\/(?<Year>\d{4})$");
+
+            if (match != null && match.Value != "")
+                return new DateTime(int.Parse(match.Groups["Year"].ToString()), int.Parse(match.Groups["Month"].ToString()), int.Parse(match.Groups["Day"].ToString()));
 
             return null;
         }

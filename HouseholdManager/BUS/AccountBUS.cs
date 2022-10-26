@@ -1,12 +1,8 @@
 ﻿using HouseholdManager.DAO;
-using HouseholdManager.DTO;
+using Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HouseholdManager.BUS
@@ -19,66 +15,42 @@ namespace HouseholdManager.BUS
 
         public static AccountBUS Instance => instance;
 
-        public Account Login(string username, string password)
-        {
-            var data = AccountDAO.Instance.Login(username, password);
+        public Account Login(string username, string password) => AccountDAO.Instance.Login(username, password);
 
-            if(data.Rows.Count == 1) return new Account(data.Rows[0]);
+        public List<Account> GetListAccount() => AccountDAO.Instance.GetListAccount();
 
-            return null;
-
-        }
-        public List<Account> GetListAccount()
-        {
-            List<Account> listAccount = new List<Account>();
-
-            DataTable data = AccountDAO.Instance.GetListAccount();
-
-            foreach (DataRow row in data.Rows)
-            {
-                listAccount.Add(new Account(row));
-            }
-
-            return listAccount;
-        }
-
-
-
-        public List<string> GetListUser()
-        {
-            var listUser = new List<string>();
-
-            var data = AccountDAO.Instance.GetListUser();
-
-            foreach (DataRow row in data.Rows)
-            {
-                listUser.Add(row[0].ToString());
-            }
-
-            return listUser;
-        }
+        public List<string> GetListUser() => AccountDAO.Instance.GetListUser();
 
         public Account InsertAccount(string username)
         {
-            var match = Regex.Match(username, @"^[a-zA-Z][a-zA-Z0-9]{4,}");
+            var match = Regex.Match(username, @"^[a-zA-Z][a-zA-Z0-9]{4,50}");
 
             if (match.Value.Equals(username) == false)
             {
-                MessageBox.Show("Tên đăng nhập ít nhất phải có 5 ký tự a - z, A - Z, 0 - 9.\n" +
+                MessageBox.Show("Tên đăng nhập gồm 5 - 50 ký tự a - z, A - Z, 0 - 9.\n" +
                                 "Ký tự đầu tiên không được là chữ số.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return null;
             }
 
-            var data = AccountDAO.Instance.InsertAccount(username);
-
-            if (data.Rows.Count > 0) return new Account(data.Rows[0]);
-
-            return null;
+            return AccountDAO.Instance.InsertAccount(username);
         }
 
         public bool DeleteAccount(string username)
         {
-            return AccountDAO.Instance.DeleteAccount(username);
+            var result = false;
+
+            try
+            {
+                result = AccountDAO.Instance.DeleteAccount(username);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -96,7 +68,16 @@ namespace HouseholdManager.BUS
         /// <br>Item4 - Kết quả cập nhật Setting.</br>
         /// </returns>
         public (bool, bool, bool, bool) UpdateAccount(string username, string displayname, string password, string note, string setting)
-        {          
+        {
+            if (!string.IsNullOrEmpty(displayname))
+            {
+                if(displayname.Length > 50)
+                {
+                    MessageBox.Show("Tên hiển thị tối đa 50 ký tự.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    return (false, false, false, false);
+                }
+            }
             return AccountDAO.Instance.UpdateAccount(username, displayname, password, note, setting);
         }
     }

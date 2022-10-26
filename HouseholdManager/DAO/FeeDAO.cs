@@ -1,32 +1,49 @@
-﻿using System;
+﻿using Interfaces;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity;
 
 namespace HouseholdManager.DAO
 {
-    public class FeeDAO
+    public class FeeDAO : IFeeDAO
     {
         private FeeDAO() { }
 
-        private static readonly FeeDAO instance = new FeeDAO();
+        private static readonly IFeeDAO instance = Config.Container.Resolve<IFeeDAO>();
 
-        public static FeeDAO Instance => instance;
+        public static IFeeDAO Instance => instance;
 
-        public DataTable GetListFee()
+        public List<Fee> GetListFee()
         {
             string query = "SELECT * FROM Fee ORDER BY ID ASC";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            List<Fee> listFee = new List<Fee>(data.Rows.Count);
+
+            foreach (DataRow row in data.Rows)
+            {
+                listFee.Add(new Fee(row));
+            }
+
+            return listFee;
+
         }
 
-        public DataTable GetFeeByID(int id)
+        public Fee GetFeeByID(int id)
         {
             string query = $"SELECT * FROM [Fee] WHERE [ID] = {id};";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            if (data.Rows.Count > 0) return new Fee(data.Rows[0]);
+
+            return null;
         }
 
         public bool DeleteFee(int id)
@@ -49,14 +66,14 @@ namespace HouseholdManager.DAO
                                      [Factor] = @factor   
                                WHERE [ID] = @id ";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, dateArise, value, factor, id });
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, dateArise.ToDate(), value, factor, id });
 
             if (result == 1) return true;
 
             return false;
         }
 
-        public DataTable InsertFee(string name, string dateArise, double value, int factor)
+        public Fee InsertFee(string name, string dateArise, double value, int factor)
         {
             string query =
           $@"INSERT INTO [Fee] (
@@ -72,17 +89,19 @@ namespace HouseholdManager.DAO
                          @factor   
                      );";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, dateArise, value, factor });
-
-            var data = new DataTable();
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { name, dateArise.ToDate(), value, factor });
 
             if (result == 1)
-                data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [Fee] WHERE [ID] = (SELECT max([ID]) FROM [Fee]);");
+            {
+                var data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [Fee] WHERE [ID] = (SELECT max([ID]) FROM [Fee]);");
 
-            return data;
+                if (data.Rows.Count > 0) return new Fee(data.Rows[0]);
+            }
+
+            return null;
         }
 
-        public DataTable InsertFeeInfo(int householdID, int feeID, string datePay, double value)
+        public FeeInfo InsertFeeInfo(int householdID, int feeID, string datePay, double value)
         {
             string query =
           $@"INSERT INTO [FeeInfo] ( 
@@ -98,17 +117,19 @@ namespace HouseholdManager.DAO
                          @value 
                      );";
 
-            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { householdID, feeID, datePay, value });
-
-            var data = new DataTable();
+            var result = DataProvider.Instance.ExecuteNonQuery(query, new object[] { householdID, feeID, datePay.ToDate(), value });
 
             if (result == 1)
-                data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [FeeInfo] WHERE [ID] = (SELECT max([ID]) FROM [FeeInfo]);");
+            {
+                var data = DataProvider.Instance.ExecuteQuery(@"SELECT * FROM [FeeInfo] WHERE [ID] = (SELECT max([ID]) FROM [FeeInfo]);");
 
-            return data;
+                if (data.Rows.Count > 0) return new FeeInfo(data.Rows[0]);
+            }
+
+            return null;
         }
 
-        public DataTable GetListFeeInfo()
+        public List<FeeInfo2> GetListFeeInfo2()
         {
             string query =
                 @"SELECT [FeeInfo].[ID],
@@ -124,7 +145,16 @@ namespace HouseholdManager.DAO
                     JOIN
                          [Fee] ON [FeeInfo].[FeeID] = [Fee].[ID];";
 
-            return DataProvider.Instance.ExecuteQuery(query);
+            DataTable data = DataProvider.Instance.ExecuteQuery(query);
+
+            List<FeeInfo2> list = new List<FeeInfo2>();
+
+            foreach (DataRow row in data.Rows)
+            {
+                list.Add(new FeeInfo2(row));
+            }
+
+            return list;
         }
     }
 }

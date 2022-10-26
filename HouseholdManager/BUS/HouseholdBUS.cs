@@ -1,11 +1,7 @@
 ﻿using HouseholdManager.DAO;
-using HouseholdManager.DTO;
+using Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace HouseholdManager.BUS
@@ -18,39 +14,33 @@ namespace HouseholdManager.BUS
 
         public static HouseholdBUS Instance => instance;
 
-        public List<Household> GetListHousehold()
-        {           
-            DataTable data = HouseholdDAO.Instance.GetListHousehold();
+        public List<Household> GetListHousehold() => HouseholdDAO.Instance.GetListHousehold();
 
-            List<Household> listHousehold = new List<Household>(data.Rows.Count);
-
-            foreach (DataRow row in data.Rows)
-            {
-                listHousehold.Add(new Household(row));
-            }
-
-            return listHousehold;
-        }
-
-        public Household GetHouseholdByID(int id)
-        {
-            DataTable data = HouseholdDAO.Instance.GetHouseholdByID(id);
-
-            if (data.Rows.Count > 0) return new Household(data.Rows[0]);
-
-            return null;
-        }
+        public Household GetHouseholdByID(int id) => HouseholdDAO.Instance.GetHouseholdByID(id);
 
         public bool DeleteHousehold(int id)
         {
-            return HouseholdDAO.Instance.DeleteHousehold(id);
+            var result = false;
+
+            try
+            {
+                result = HouseholdDAO.Instance.DeleteHousehold(id);
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                return false;
+            }
+
+            return result;
         }
 
         public bool UpdateHousehold(int id, string owner, string address)
         {
-            if (!owner.IsVietnamese() || !address.IsVietnamese())
+            if (!owner.IsVietnamese(50) || !address.IsVietnamese(50))
             {
-                MessageBox.Show("Họ tên và quê quán chỉ được sử dụng ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Họ tên và quê quán chỉ được sử dụng tối đa 50 ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return false;
             }
@@ -60,18 +50,14 @@ namespace HouseholdManager.BUS
 
         public Household InsertHousehold( string owner, string address)
         {
-            if (!owner.IsVietnamese() || !address.IsVietnamese())
+            if (!owner.IsVietnamese(50) || !address.IsVietnamese(50))
             {
-                MessageBox.Show("Họ tên và quê quán chỉ được sử dụng ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Họ tên và quê quán chỉ được sử dụng tối đa 50 ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return null;
             }
 
-            var data = HouseholdDAO.Instance.InsertHousehold(owner, address);
-
-            if (data.Rows.Count > 0) return new Household(data.Rows[0]);
-
-            return null;
+            return HouseholdDAO.Instance.InsertHousehold(owner, address);
         }
 
     }
