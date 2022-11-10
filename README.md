@@ -4,3 +4,4 @@ Phần mềm quản lý dân cư
 - Phân trang, sắp xếp theo từng cột được chọn
 - Cài đặt quyền, hiển thị theo tài khoản đăng nhập
 - Sử dụng SQLite hoặc SQL Server (Entity Framework)
+- Ghi log các thao tác
