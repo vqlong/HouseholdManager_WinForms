@@ -37,16 +37,25 @@ namespace HouseholdManager
             input = input.ToLower().ToUnsigned();
 
             //Nếu item nào có  1 thuộc tính mà giá trị của nó bao gồm giá trị tìm kiếm sẽ được giữ lại
-            //Ngược lại, xoá khổi list
+            //Ngược lại, xoá khỏi list
             foreach (T item in source)
             {
                 var isContained = false;
 
                 foreach (var property in properties)
                 {
-                    if ((property.PropertyType.IsGenericType || property.PropertyType.IsClass) && property.PropertyType != typeof(string)) continue;
+                    if ((property.PropertyType.IsGenericType || property.PropertyType.IsClass) /*&& property.PropertyType != typeof(string)*/) continue;
 
-                    if (property.GetValue(item).ToString().ToUnsigned().ToLower().Contains(input))
+                    var value = property.GetValue(item);
+
+                    var valueString = value.ToString();
+
+                    //Nếu property là các kiểu này thì value sẽ được ToString lại
+                    if (property.PropertyType == typeof(DateTime)) valueString = ((DateTime)value).ToString("dd/MM/yyyy");
+                    if (property.PropertyType == typeof(PersonGender)) valueString = ((PersonGender)value).ToStringDescription();
+                    if (property.PropertyType == typeof(HouseholdRelation)) valueString = ((HouseholdRelation)value).ToStringDescription();
+
+                    if (valueString.ToUnsigned().ToLower().Contains(input))
                     {
                         isContained = true;
 

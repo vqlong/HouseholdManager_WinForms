@@ -36,6 +36,7 @@ namespace EntityDataAccess
                 {
                     case "ID": return context.People.OrderBy(p => p.ID).ToList();
                     case "Name": return context.People.OrderBy(p => p.Name).ToList();
+                    case "Gender": return context.People.OrderBy(p => p.Gender).ToList();
                     case "DateOfBirth": return context.People.OrderBy(p => p.DateOfBirth).ToList();
                     case "CMND": return context.People.OrderBy(p => p.Cmnd).ToList();
                     case "Address": return context.People.OrderBy(p => p.Address).ToList();
