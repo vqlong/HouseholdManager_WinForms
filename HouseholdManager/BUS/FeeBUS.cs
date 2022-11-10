@@ -20,8 +20,7 @@ namespace HouseholdManager.BUS
 
         public bool DeleteFee(int id)
         {
-            var result = false;
-
+            bool result;
             try
             {
                 result = FeeDAO.Instance.DeleteFee(id);
@@ -30,8 +29,12 @@ namespace HouseholdManager.BUS
             {
                 MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                Help.Log.ErrorFormat($"Delete Fee - Exception - {e.Message}");
+
                 return false;
             }
+
+            Help.Log.InfoFormat($"Delete Fee - ID: {id}, result: {result}");
 
             return result;
         }
@@ -52,7 +55,11 @@ namespace HouseholdManager.BUS
                 return false;
             }
 
-            return FeeDAO.Instance.UpdateFee(id, name, dateArise, value, factor);
+            var result = FeeDAO.Instance.UpdateFee(id, name, dateArise, value, factor);
+
+            Help.Log.InfoFormat($"Update Fee - ID: {id}, Name: {name}, result: {result}");
+
+            return result;
         }
 
         public Fee InsertFee(string name, string dateArise, double value, int factor)
@@ -69,9 +76,15 @@ namespace HouseholdManager.BUS
                 MessageBox.Show("Ngày tháng phải có dạng dd/MM/yyyy.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 return null;
-            }           
+            }
 
-            return FeeDAO.Instance.InsertFee(name, dateArise, value, factor);
+            var fee = FeeDAO.Instance.InsertFee(name, dateArise, value, factor);
+
+            var result = fee != null;
+
+            Help.Log.InfoFormat($"Insert Fee - ID: {fee?.ID}, Name: {name}, result: {result}");
+
+            return fee;
         }
 
         public FeeInfo InsertFeeInfo(int householdID, int feeID, string datePay, double value)
@@ -84,7 +97,13 @@ namespace HouseholdManager.BUS
                 return null;
             }
 
-            return FeeDAO.Instance.InsertFeeInfo(householdID, feeID, datePay, value);
+            var feeInfo = FeeDAO.Instance.InsertFeeInfo(householdID, feeID, datePay, value);
+
+            var result = feeInfo != null;
+
+            Help.Log.InfoFormat($"Insert FeeInfo - ID: {feeInfo?.ID}, Household.ID: {householdID}, Fee.ID: {feeInfo}, result: {result}");
+
+            return feeInfo;
         }
 
         public List<FeeInfo2> GetListFeeInfo2() => FeeDAO.Instance.GetListFeeInfo2();

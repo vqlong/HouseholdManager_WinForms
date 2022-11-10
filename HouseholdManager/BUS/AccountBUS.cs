@@ -32,7 +32,13 @@ namespace HouseholdManager.BUS
                 return null;
             }
 
-            return AccountDAO.Instance.InsertAccount(username);
+            var account = AccountDAO.Instance.InsertAccount(username);
+
+            var result = account != null;
+
+            Help.Log.InfoFormat($"Insert Account - Username: {username}, result: {result}");
+
+            return account;
         }
 
         public bool DeleteAccount(string username)
@@ -47,8 +53,12 @@ namespace HouseholdManager.BUS
             {
                 MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                Help.Log.ErrorFormat($"Delete Account - Exception - {e.Message}");
+
                 return false;
             }
+
+            Help.Log.InfoFormat($"Delete Account - Username: {username}, result: {result}");
 
             return result;
         }
@@ -78,7 +88,12 @@ namespace HouseholdManager.BUS
                     return (false, false, false, false);
                 }
             }
-            return AccountDAO.Instance.UpdateAccount(username, displayname, password, note, setting);
+
+            var result = AccountDAO.Instance.UpdateAccount(username, displayname, password, note, setting);
+
+            Help.Log.InfoFormat($"Update Account - Username: {username}, result (Displayname, Password, Note, Setting): {result}");
+
+            return result;
         }
     }
 }

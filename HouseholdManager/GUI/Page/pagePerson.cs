@@ -339,6 +339,8 @@ namespace HouseholdManager.GUI
                 nmTotalPages.Value = Help.GetTotalPages(ListPerson);
                 //Chạy đến trang cuối nơi có nhân khẩu vừa insert
                 personBindingSource.DataSource = Help.GetPage(ListPerson, (int)nmTotalPages.Value);
+                //Click để hiện lại số trang
+                btnLast.PerformClick();
 
                 //Highlight nhân khẩu vừa insert
                 dtgvPerson.CurrentCell = dtgvPerson.Rows[dtgvPerson.RowCount - 1].Cells[1];

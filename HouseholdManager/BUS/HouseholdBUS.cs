@@ -30,8 +30,16 @@ namespace HouseholdManager.BUS
             {
                 MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                var message = e.Message;
+                message = message.Replace("\r\n", " ");
+                message = message.Replace("\n", " ");
+
+                Help.Log.ErrorFormat($"Delete Household - Exception - {message}");
+
                 return false;
             }
+
+            Help.Log.InfoFormat($"Delete Household - ID: {id}, result: {result}");
 
             return result;
         }
@@ -41,11 +49,15 @@ namespace HouseholdManager.BUS
             if (!owner.IsVietnamese(50) || !address.IsVietnamese(50))
             {
                 MessageBox.Show("Họ tên và quê quán chỉ được sử dụng tối đa 50 ký tự Latin.\nGiữa các từ chỉ có 1 dấu cách.\nTrong 1 từ có nhiều nhất 1 dấu nháy đơn.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+                
                 return false;
             }
 
-            return HouseholdDAO.Instance.UpdateHousehold(id, owner, address);
+            var result = HouseholdDAO.Instance.UpdateHousehold(id, owner, address);
+
+            Help.Log.InfoFormat($"Update Household - ID: {id}, Owner: {owner}, result: {result}");
+
+            return result;
         }
 
         public Household InsertHousehold( string owner, string address)
@@ -57,7 +69,13 @@ namespace HouseholdManager.BUS
                 return null;
             }
 
-            return HouseholdDAO.Instance.InsertHousehold(owner, address);
+            var household = HouseholdDAO.Instance.InsertHousehold(owner, address);
+
+            var result = household != null;
+
+            Help.Log.InfoFormat($"Insert Household - ID: {household?.ID}, Owner: {owner}, result: {result}");
+
+            return household;
         }
 
     }

@@ -50,7 +50,7 @@ namespace HouseholdManager.GUI
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        List<Person> _listPerson;
+        //List<Person> _listPerson;
         /// <summary>
         /// 1 List&lt;Person&gt; dùng để binding với ListPerson của pPerson.
         /// </summary>

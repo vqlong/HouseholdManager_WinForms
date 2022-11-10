@@ -83,6 +83,8 @@ namespace HouseholdManager.GUI
 
             AccountLogin?.Invoke(this, EventArgs.Empty);
 
+            Help.Log.InfoFormat($"Login Account - Username: {username}, Displayname: {account.DisplayName}, Account Type: {account.Type}");
+
             //Truyền fLogin vào ngay khi khởi tạo fMain để tránh null exception tại các đoạn sử dụng thuộc tính FormLogin của fMain
             if (FormMain == null) FormMain = new fMain(this, account);           
 

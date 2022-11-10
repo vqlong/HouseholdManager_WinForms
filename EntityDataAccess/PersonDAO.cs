@@ -77,6 +77,12 @@ namespace EntityDataAccess
         {
             using (var context = new HouseholdManagerContext())
             {
+                //Nếu hộ khẩu không tồn tại
+                if(context.Households.Count(h => h.ID == householdID) <= 0)
+                {
+                    throw new Exception("Hộ khẩu không tồn tại.");
+                }
+
                 //Nếu insert 1 người làm chủ hộ vào trong 1 hộ khẩu đã có chủ hộ
                 if(relation == 1 && context.People.Count(p => p.HouseholdID == householdID && p.Relation == HouseholdRelation.Owner) > 0)
                 {

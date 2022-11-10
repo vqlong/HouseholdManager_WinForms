@@ -59,8 +59,18 @@ namespace HouseholdManager.BUS
             {
                 MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                var message = e.Message;
+                message = message.Replace("\r\n", " ");
+                message = message.Replace("\n", " ");
+
+                Help.Log.ErrorFormat($"Insert Person - Exception - {message}");
+
                 return null;
             }
+
+            var result = person != null;
+
+            Help.Log.InfoFormat($"Insert Person - ID: {person?.ID}, Name: {name}, result: {result}");
 
             return person;
         }
@@ -77,8 +87,12 @@ namespace HouseholdManager.BUS
             {
                 MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                Help.Log.ErrorFormat($"Delete Person - Exception - {e.Message}");
+
                 return false;
             }
+
+            Help.Log.InfoFormat($"Delete Person - ID: {id}, result: {result}");
 
             return result;
         }
@@ -116,8 +130,16 @@ namespace HouseholdManager.BUS
             {
                 MessageBox.Show(e.Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                var message = e.Message;
+                message = message.Replace("\r\n", " ");
+                message = message.Replace("\n", " ");
+
+                Help.Log.ErrorFormat($"Update Person - Exception - {message}");
+
                 return false;
             }
+
+            Help.Log.InfoFormat($"Update Person - ID: {id}, Name: {name}, result: {result}");
 
             return result;
         }

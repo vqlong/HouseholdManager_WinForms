@@ -1,4 +1,5 @@
 ﻿using HouseholdManager.GUI;
+using log4net;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,9 @@ using System.Windows.Forms;
 namespace HouseholdManager
 {
     public static class Help
-    {
+    {      
+        public static ILog Log { get; } = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         /// <summary>
         /// Tìm input trong mỗi property của các phần tử trong source.
         /// </summary>

@@ -1,5 +1,6 @@
 ﻿using HouseholdManager.GUI;
 using Interfaces;
+using log4net.Config;
 using System;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
@@ -17,6 +18,12 @@ namespace HouseholdManager
         {
             Config.RegisterEF();
             //Config.RegisterSQLite();
+
+            //Chọn đường dẫn cho thư mục chứa file log
+            log4net.GlobalContext.Properties["LogPath"] = Application.StartupPath;
+            log4net.GlobalContext.Properties["DataProvider"] = Config.DataProvider;
+            //Cấu hình đặt trong App.config
+            XmlConfigurator.Configure();
             
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += (s, e) => MessageBox.Show((e.ExceptionObject as Exception).Message, "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -32,6 +39,8 @@ namespace HouseholdManager
     {
         public static UnityContainer Container { get; } = new UnityContainer();
 
+        public static string DataProvider { get; private set; }
+
         public static void RegisterEF()
         {
             Container.RegisterInstance<IAccountDAO>(Activator.CreateInstance(typeof(EntityDataAccess.AccountDAO), true) as EntityDataAccess.AccountDAO, InstanceLifetime.Singleton);
@@ -39,7 +48,7 @@ namespace HouseholdManager
             Container.RegisterInstance<IFeeDAO>(Activator.CreateInstance(typeof(EntityDataAccess.FeeDAO), true) as EntityDataAccess.FeeDAO, InstanceLifetime.Singleton);
             Container.RegisterInstance<IHouseholdDAO>(Activator.CreateInstance(typeof(EntityDataAccess.HouseholdDAO), true) as EntityDataAccess.HouseholdDAO, InstanceLifetime.Singleton);
             Container.RegisterInstance<IPersonDAO>(Activator.CreateInstance(typeof(EntityDataAccess.PersonDAO), true) as EntityDataAccess.PersonDAO, InstanceLifetime.Singleton);
-            
+            DataProvider = "EF6-SqlServer";
         }
 
         public static void RegisterSQLite()
@@ -49,7 +58,7 @@ namespace HouseholdManager
             Container.RegisterFactory<IFeeDAO>(uc => Activator.CreateInstance(typeof(HouseholdManager.DAO.FeeDAO), true) as HouseholdManager.DAO.FeeDAO, FactoryLifetime.Singleton);
             Container.RegisterFactory<IHouseholdDAO>(uc => Activator.CreateInstance(typeof(HouseholdManager.DAO.HouseholdDAO), true) as HouseholdManager.DAO.HouseholdDAO, FactoryLifetime.Singleton);
             Container.RegisterFactory<IPersonDAO>(uc => Activator.CreateInstance(typeof(HouseholdManager.DAO.PersonDAO), true) as HouseholdManager.DAO.PersonDAO, FactoryLifetime.Singleton);
-
+            DataProvider = "ADO.NET-SQLite";
         }
     }
 }
