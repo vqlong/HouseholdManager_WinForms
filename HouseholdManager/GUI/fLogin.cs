@@ -5,6 +5,7 @@ using DevExpress.Utils.Drawing;
 using HouseholdManager.BUS;
 using System;
 using System.Drawing;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace HouseholdManager.GUI
@@ -31,6 +32,10 @@ namespace HouseholdManager.GUI
         /// Xảy ra khi 1 tài khoản đăng nhập thành công.
         /// </summary>
         public event EventHandler AccountLogin;
+
+        //public fWait Waiting { get; } = new fWait();
+        fWait waiting = new fWait();
+        Thread threadWaiting;
 
         void Initialize()
         {
@@ -72,7 +77,15 @@ namespace HouseholdManager.GUI
         }
 
         void Login(string username, string password)
-        {
+        {         
+            if (FormMain == null)
+            {
+                CheckForIllegalCrossThreadCalls = false;
+                //waiting = new fWait();
+                threadWaiting = new Thread(() => { waiting.ShowDialog(); });
+                threadWaiting.Start();
+            }
+
             var account = AccountBUS.Instance.Login(username, password);
 
             if (account == null)
@@ -86,7 +99,15 @@ namespace HouseholdManager.GUI
             Help.Log.InfoFormat($"Login Account - Username: {username}, Displayname: {account.DisplayName}, Account Type: {account.Type}");
 
             //Truyền fLogin vào ngay khi khởi tạo fMain để tránh null exception tại các đoạn sử dụng thuộc tính FormLogin của fMain
-            if (FormMain == null) FormMain = new fMain(this, account);           
+            if (FormMain == null)
+            {
+                FormMain = new fMain(this, account);
+
+                waiting.Close();
+                CheckForIllegalCrossThreadCalls = true;
+                //threadWaiting.Abort();
+            }
+            waiting = new fWait();
 
             FormMain.Account = account;
 

@@ -185,6 +185,12 @@
     <Compile Include="GUI\fSelect.Designer.cs">
       <DependentUpon>fSelect.cs</DependentUpon>
     </Compile>
+    <Compile Include="GUI\fWait.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\fWait.Designer.cs">
+      <DependentUpon>fWait.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUI\Page\pageSetting.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -266,6 +272,9 @@
     <EmbeddedResource Include="GUI\fSelect.resx">
       <DependentUpon>fSelect.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GUI\fWait.resx">
+      <DependentUpon>fWait.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GUI\Page\pageSetting.resx">
       <DependentUpon>pageSetting.cs</DependentUpon>
     </EmbeddedResource>
@@ -296,7 +305,6 @@
     <EmbeddedResource Include="GUI\Page\pagePerson.resx">
       <DependentUpon>pagePerson.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -305,6 +313,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -374,6 +383,9 @@
       <Project>{F44842EE-A5D8-4094-AB42-DA989AFEE04A}</Project>
       <Name>Models</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Khau-hieu1.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
