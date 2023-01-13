@@ -253,6 +253,7 @@
       <DependentUpon>pageAccountInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="Help.cs" />
+    <Compile Include="ProcessHousehold.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="GUI\fDialogBox.resx">

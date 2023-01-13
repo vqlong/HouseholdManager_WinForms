@@ -45,6 +45,8 @@ namespace HouseholdManager
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new fLogin());
         }
+
+        internal static void Execute() => Main();
     }
 
     class Config
